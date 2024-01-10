@@ -1,5 +1,4 @@
 
-
 import java.io.File;
 
 public class SystemInfo {
@@ -23,9 +22,8 @@ public class SystemInfo {
 
     private static void printSystemMemoryInfo() {
         Runtime runtime = Runtime.getRuntime();
-        long totalMemory = runtime.totalMemory();
-        System.out.println("System Memory:");
-        System.out.println("  Total Memory: " + totalMemory/(512*1024) +" GB");
+        long maxMemory = runtime.maxMemory();
+        System.out.println("Total Memory: " + maxMemory/(8*1024*1024) +" GB");
     }
 
     private static void printSystemCPUInfo() {
