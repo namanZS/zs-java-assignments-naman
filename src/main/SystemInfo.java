@@ -1,4 +1,4 @@
-
+package src.main;
 import java.io.File;
 
 public class SystemInfo {
@@ -16,18 +16,16 @@ public class SystemInfo {
 
     }
     private static void printHomeDirectory() {
-
         System.out.println("Home Directory: " + System.getProperty("user.home"));
     }
 
     private static void printSystemMemoryInfo() {
-        Runtime runtime = Runtime.getRuntime();
-        long maxMemory = runtime.maxMemory();
+        long maxMemory = Runtime.getRuntime().maxMemory();
         System.out.println("Total Memory: " + maxMemory/(8*1024*1024) +" GB");
     }
 
     private static void printSystemCPUInfo() {
-        int count = Runtime.getRuntime().availableProcessors();
+        long count = Runtime.getRuntime().availableProcessors();
         System.out.println("System CPU/Cores: " + count);
     }
 
