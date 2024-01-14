@@ -135,7 +135,6 @@ public class MatrixOperations {
 
     }
 //    Function to multiply a matrix with a scalar value
-    
     private static int[][] scalarMultiply(Scanner scanner){
 
         System.out.println("Enter matrix ");
@@ -158,7 +157,7 @@ public class MatrixOperations {
 
     /**
      * This function takes a matrix as input transpose it.
-     * @param A
+     * @param scanner object
      * @return transposed matrix
      */
     private static int[][] transpose(Scanner scanner){
