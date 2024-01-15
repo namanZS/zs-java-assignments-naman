@@ -1,37 +1,7 @@
 package src.main;
 import java.util.Scanner;
 public class MatrixOperations {
-    public static void main(String []args){
-
-        Scanner scanner= new Scanner(System.in);
-
-        while(true) {
-            System.out.println("Choose a option to perform\n 1. A+B \n 2. A-B \n 3. A*B \n 4. A'\n 5. k*A \n 0. To exit\n");
-        switch(scanner.nextInt()){
-            case 1:
-                System.out.println("A + B= ");
-                printResult(add(scanner));
-                break;
-            case 2:
-                System.out.println("A - B= ");
-                printResult(subtract(scanner));break;
-            case 3:
-                System.out.println("A * B= ");
-                printResult(multiply(scanner));break;
-            case 4:
-                System.out.println("Transpose of A is ");
-                printResult(transpose(scanner));break;
-            case 5:
-                System.out.println("k * A = ");
-                printResult(scalarMultiply(scanner));break;
-            case 0:
-                System.exit(0);
-            default:
-                System.out.println(" Wrong value entered, please try again ! ");
-        }
-        }
-    }
-    private static int input(Scanner in){
+    public int input(Scanner in){
         int n;
         while(true){
             n=in.nextInt();
@@ -41,7 +11,7 @@ public class MatrixOperations {
         }
     }
 
-    private static int [][] readMatrix(Scanner scanner){
+    public int [][] readMatrix(Scanner scanner){
 
         System.out.print("Enter rows size ");
         int row=input(scanner);
@@ -60,7 +30,7 @@ public class MatrixOperations {
 
     }
     //function to add matrix A and matrix B
-    private static int[][] add(Scanner scanner){
+    public int[][] add(Scanner scanner){
 
         System.out.println("Enter A matrix ");
         int [][]A= readMatrix(scanner);
@@ -85,7 +55,7 @@ public class MatrixOperations {
 
     }
     //Function to subtract B from A
-    private static int[][] subtract(Scanner scanner){
+    public int[][] subtract(Scanner scanner){
 
         System.out.println("Enter A matrix ");
         int [][]A= readMatrix(scanner);
@@ -111,7 +81,7 @@ public class MatrixOperations {
 
     }
 //    Function to multiply A with B
-    private static int[][] multiply(Scanner scanner){
+    public int[][] multiply(Scanner scanner){
 
         System.out.println("Enter A matrix ");
         int [][]A= readMatrix(scanner);
@@ -119,14 +89,12 @@ public class MatrixOperations {
         System.out.println("Enter B matrix ");
         int [][]B= readMatrix(scanner);
 
-        int rowA=A.length;
-        int colA=A[0].length;
-        int colB=B[0].length;
+        int[][]result=new int[A.length][B[0].length];
 
-        int[][]result=new int[A.length][A[0].length];
-        for (int i = 0; i < rowA; i++) {
-            for (int j = 0; j < colB; j++) {
-                for (int k = 0; k < colA; k++) {
+        if (A[0].length != B.length) { return result;}
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < B[0].length; j++) {
+                for (int k = 0; k < B.length; k++) {
                     result[i][j] += A[i][k] * B[k][j];
                 }
             }
@@ -135,7 +103,7 @@ public class MatrixOperations {
 
     }
 //    Function to multiply a matrix with a scalar value
-    private static int[][] scalarMultiply(Scanner scanner){
+    public int[][] scalarMultiply(Scanner scanner){
 
         System.out.println("Enter matrix ");
         int [][]A= readMatrix(scanner);
@@ -160,7 +128,7 @@ public class MatrixOperations {
      * @param scanner object
      * @return transposed matrix
      */
-    private static int[][] transpose(Scanner scanner){
+    public int[][] transpose(Scanner scanner){
         System.out.println("Enter matrix ");
         int [][]A= readMatrix(scanner);
         int[][]result=new int[A[0].length][A.length];
@@ -179,7 +147,7 @@ public class MatrixOperations {
      *
      * @param result
      */
-    private static void printResult(int [][]result){
+    public void printResult(int [][]result){
         for (int[] ints : result) {
             for (int j = 0; j < result[0].length; j++) {
                 System.out.print(ints[j] + " ");
@@ -187,6 +155,7 @@ public class MatrixOperations {
             System.out.println();
         }
         System.out.println();
+       
         
     }
     
