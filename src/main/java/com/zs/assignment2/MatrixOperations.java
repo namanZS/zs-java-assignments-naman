@@ -1,4 +1,4 @@
-package src.main;
+package src.main.java.com.zs.assignment2;
 import java.util.Scanner;
 public class MatrixOperations {
     public int input(Scanner in){
@@ -144,7 +144,7 @@ public class MatrixOperations {
 //    function to print the matrix
 
     /**
-     *
+     * Printing the matrix
      * @param result
      */
     public void printResult(int [][]result){
