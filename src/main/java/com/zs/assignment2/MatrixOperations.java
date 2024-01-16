@@ -1,84 +1,86 @@
 package src.main.java.com.zs.assignment2;
 import java.util.Scanner;
 public class MatrixOperations {
+    private final Scanner input;
+    public MatrixOperations() {
+        this.input = new Scanner(System.in);
+    }
     public int input(){
-        Scanner in = new Scanner(System.in);
         int num;
         while(true){
-            num=in.nextInt();
+            num=input.nextInt();
             if(num<=0)System.out.println("Not a valid value Enter Again");
             else return num;
         }
     }
 
-    public int [][] readMatrix(){
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter rows size ");
-        int row=input();
+    /**
+     * Function to read a matrix
+     * @return
+     */
+    public int[][] readMatrix() {
+        System.out.print("Enter row size ");
+        int row = input();
 
         System.out.print("Enter column size ");
-        int col=input();
+        int col = input();
 
-        int [][]matrix=new int[row][col];
-        for(int i=0;i<row;i++){
-            for(int j=0;j<col;j++){
-                System.out.print("Enter value ["+i+"]["+ j+ "] " );
-                matrix[i][j] = scanner.nextInt();
+        int[][] matrix = new int[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                System.out.print("Enter value [" + i + "][" + j + "] ");
+                matrix[i][j] = input.nextInt();
             }
         }
         return matrix;
-
     }
 
     /**
      * Function to add two matrices A & B
      */
     public void add() {
-        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter A matrix ");
-        int[][] A = readMatrix();
+        int[][] matrixA = readMatrix();
 
         System.out.println("Enter B matrix ");
-        int[][] B = readMatrix();
-        if (A.length != B.length || A[0].length != B[0].length) {
+        int[][] matrixB = readMatrix();
+        if (matrixA.length != matrixB.length || matrixA[0].length != matrixB[0].length) {
             System.out.println("Invalid matrix sizes");
             return;
         }
-        int[][] result = new int[A.length][A[0].length];
-        for (int i = 0; i < A.length; i++) {
-            for (int j = 0; j < A[0].length; j++) {
-                result[i][j] = A[i][j] + B[i][j];
+        int[][] result = new int[matrixA.length][matrixA[0].length];
+        for (int i = 0; i < matrixA.length; i++) {
+            for (int j = 0; j < matrixA[0].length; j++) {
+                result[i][j] = matrixA[i][j] + matrixB[i][j];
             }
         }
-        printResult(result);
+        printResult(result,"Addition");
 
     }
 
     /**
-     * Function to subtract matrix B from A
+     * Function to subtract matrix matrixB from A
      */
     public void subtract(){
-        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter A matrix ");
-        int [][]A= readMatrix();
+        int [][]matrixA= readMatrix();
 
         System.out.println("Enter B matrix ");
-        int [][]B= readMatrix();
-        if (A.length != B.length || A[0].length != B[0].length) {
+        int [][]matrixB= readMatrix();
+        if (matrixA.length != matrixB.length || matrixA[0].length != matrixB[0].length) {
             System.out.println("Invalid matrix sizes");
             return;
         }
 
-        int[][] result = new int[A.length][A[0].length];
-        for (int i = 0; i < A.length; i++) {
-            for (int j = 0; j < A[0].length; j++) {
-                result[i][j] = B[i][j] - A[i][j];
+        int[][] result = new int[matrixA.length][matrixA[0].length];
+        for (int i = 0; i < matrixA.length; i++) {
+            for (int j = 0; j < matrixA[0].length; j++) {
+                result[i][j] = matrixB[i][j] - matrixA[i][j];
             }
         }
-        printResult(result);
+        printResult(result,"Substraction");
 
     }
 
@@ -86,28 +88,27 @@ public class MatrixOperations {
      * Function to multiply matrix A with matrix B
      */
     public void multiply(){
-        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter A matrix ");
-        int [][]A= readMatrix();
+        int [][]matrixA= readMatrix();
 
         System.out.println("Enter B matrix ");
-        int [][]B= readMatrix();
+        int [][]matrixB= readMatrix();
 
-        if (A[0].length != B.length) {
+        if (matrixA[0].length != matrixB.length) {
             System.out.println("Incompatible matrix sizes");
             return;
         }
 
-        int[][] result = new int[A.length][B[0].length];
-        for (int i = 0; i < A.length; i++) {
-            for (int j = 0; j < B[0].length; j++) {
-                for (int k = 0; k < B.length; k++) {
-                    result[i][j] += A[i][k] * B[k][j];
+        int[][] result = new int[matrixA.length][matrixB[0].length];
+        for (int i = 0; i < matrixA.length; i++) {
+            for (int j = 0; j < matrixB[0].length; j++) {
+                for (int k = 0; k < matrixB.length; k++) {
+                    result[i][j] += matrixA[i][k] * matrixB[k][j];
                 }
             }
         }
-        printResult(result);
+        printResult(result,"Multiplication");
 
     }
 
@@ -115,21 +116,20 @@ public class MatrixOperations {
      * Function to multiply the matrix A with an integer k
      */
     public void scalarMultiply(){
-        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter matrix ");
-        int [][]A= readMatrix();
+        int [][]matrixA= readMatrix();
 
         System.out.print("Enter value for k ");
-        int  k=scanner.nextInt();
+        int  k=input.nextInt();
 
-        int[][]result=new int[A.length][A[0].length];
-        for(int i=0;i<A.length;i++){
-            for(int j=0;j<A[0].length;j++){
-                result[i][j]=k*A[i][j];
+        int[][]result=new int[matrixA.length][matrixA[0].length];
+        for(int i=0;i<matrixA.length;i++){
+            for(int j=0;j<matrixA[0].length;j++){
+                result[i][j]=k*matrixA[i][j];
             }
         }
-        printResult(result);
+        printResult(result, "Scaler Multiplication");
 
 
     }
@@ -139,24 +139,25 @@ public class MatrixOperations {
      */
     public void transpose(){
         System.out.println("Enter matrix ");
-        int [][]A= readMatrix();
-        int[][]result=new int[A[0].length][A.length];
-        for(int i=0;i<A[0].length;i++){
-            for(int j=0;j<A.length;j++){
-                    result[i][j]=A[j][i];
+        int [][]matrixA= readMatrix();
+        int[][]result=new int[matrixA[0].length][matrixA.length];
+        for(int i=0;i<matrixA[0].length;i++){
+            for(int j=0;j<matrixA.length;j++){
+                    result[i][j]=matrixA[j][i];
             }
         }
-        printResult(result);
+        printResult(result,"Transpose");
 
 
     }
 
     /**
-     * Function to print a matrix
+     * Function to print any matrix
      * @param result
      */
 
-    public void printResult(int [][]result){
+    public void printResult(int [][]result,String operation){
+        System.out.println(operation+" Result: ");
         for (int[] rows : result) {
             for (int j = 0; j < result[0].length; j++) {
                 System.out.print(rows[j] + " ");
