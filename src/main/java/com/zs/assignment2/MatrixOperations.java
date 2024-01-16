@@ -1,23 +1,24 @@
 package src.main.java.com.zs.assignment2;
 import java.util.Scanner;
 public class MatrixOperations {
-    public int input(Scanner in){
-        int n;
+    public int input(){
+        Scanner in = new Scanner(System.in);
+        int num;
         while(true){
-            n=in.nextInt();
-
-            if(n<=0)System.out.println("Not a valid value Enter Again");
-            else return n;
+            num=in.nextInt();
+            if(num<=0)System.out.println("Not a valid value Enter Again");
+            else return num;
         }
     }
 
-    public int [][] readMatrix(Scanner scanner){
+    public int [][] readMatrix(){
+        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter rows size ");
-        int row=input(scanner);
+        int row=input();
 
         System.out.print("Enter column size ");
-        int col=input(scanner);
+        int col=input();
 
         int [][]matrix=new int[row][col];
         for(int i=0;i<row;i++){
@@ -29,69 +30,76 @@ public class MatrixOperations {
         return matrix;
 
     }
-    //function to add matrix A and matrix B
-    public int[][] add(Scanner scanner){
+
+    /**
+     * Function to add two matrices A & B
+     */
+    public void add() {
+        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter A matrix ");
-        int [][]A= readMatrix(scanner);
+        int[][] A = readMatrix();
 
         System.out.println("Enter B matrix ");
-        int [][]B= readMatrix(scanner);
-
-        int[][] result = new int[A.length][A[0].length];
-        if(A.length==B.length && A[0].length==B[0].length) {
-
-            for (int i = 0; i < A.length; i++) {
-                for (int j = 0; j < A[0].length; j++) {
-                    result[i][j] = A[i][j] + B[i][j];
-                }
-            }
-
-        }
-        else {
+        int[][] B = readMatrix();
+        if (A.length != B.length || A[0].length != B[0].length) {
             System.out.println("Invalid matrix sizes");
+            return;
         }
-        return result;
+        int[][] result = new int[A.length][A[0].length];
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < A[0].length; j++) {
+                result[i][j] = A[i][j] + B[i][j];
+            }
+        }
+        printResult(result);
 
     }
-    //Function to subtract B from A
-    public int[][] subtract(Scanner scanner){
+
+    /**
+     * Function to subtract matrix B from A
+     */
+    public void subtract(){
+        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter A matrix ");
-        int [][]A= readMatrix(scanner);
+        int [][]A= readMatrix();
 
         System.out.println("Enter B matrix ");
-        int [][]B= readMatrix(scanner);
+        int [][]B= readMatrix();
+        if (A.length != B.length || A[0].length != B[0].length) {
+            System.out.println("Invalid matrix sizes");
+            return;
+        }
 
         int[][] result = new int[A.length][A[0].length];
-        if(A.length==B.length && A[0].length==B[0].length) {
-
-            for (int i = 0; i < A.length; i++) {
-                for (int j = 0; j < A[0].length; j++) {
-                    result[i][j] = B[i][j] - A[i][j];
-                }
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < A[0].length; j++) {
+                result[i][j] = B[i][j] - A[i][j];
             }
-
         }
-        else {
-            System.out.println("Invalid matrix sizes");
-
-        }
-        return result;
+        printResult(result);
 
     }
-//    Function to multiply A with B
-    public int[][] multiply(Scanner scanner){
+
+    /**
+     * Function to multiply matrix A with matrix B
+     */
+    public void multiply(){
+        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter A matrix ");
-        int [][]A= readMatrix(scanner);
+        int [][]A= readMatrix();
 
         System.out.println("Enter B matrix ");
-        int [][]B= readMatrix(scanner);
+        int [][]B= readMatrix();
 
-        int[][]result=new int[A.length][B[0].length];
+        if (A[0].length != B.length) {
+            System.out.println("Incompatible matrix sizes");
+            return;
+        }
 
-        if (A[0].length != B.length) { return result;}
+        int[][] result = new int[A.length][B[0].length];
         for (int i = 0; i < A.length; i++) {
             for (int j = 0; j < B[0].length; j++) {
                 for (int k = 0; k < B.length; k++) {
@@ -99,14 +107,18 @@ public class MatrixOperations {
                 }
             }
         }
-        return result;
+        printResult(result);
 
     }
-//    Function to multiply a matrix with a scalar value
-    public int[][] scalarMultiply(Scanner scanner){
+
+    /**
+     * Function to multiply the matrix A with an integer k
+     */
+    public void scalarMultiply(){
+        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter matrix ");
-        int [][]A= readMatrix(scanner);
+        int [][]A= readMatrix();
 
         System.out.print("Enter value for k ");
         int  k=scanner.nextInt();
@@ -117,40 +129,37 @@ public class MatrixOperations {
                 result[i][j]=k*A[i][j];
             }
         }
-        return result;
+        printResult(result);
 
 
     }
-//    Function to transpose a matrix
 
     /**
-     * This function takes a matrix as input transpose it.
-     * @param scanner object
-     * @return transposed matrix
+     * Function to Transpose the matrix A
      */
-    public int[][] transpose(Scanner scanner){
+    public void transpose(){
         System.out.println("Enter matrix ");
-        int [][]A= readMatrix(scanner);
+        int [][]A= readMatrix();
         int[][]result=new int[A[0].length][A.length];
         for(int i=0;i<A[0].length;i++){
             for(int j=0;j<A.length;j++){
                     result[i][j]=A[j][i];
             }
         }
-        return result;
+        printResult(result);
 
 
     }
-//    function to print the matrix
 
     /**
-     * Printing the matrix
+     * Function to print a matrix
      * @param result
      */
+
     public void printResult(int [][]result){
-        for (int[] ints : result) {
+        for (int[] rows : result) {
             for (int j = 0; j < result[0].length; j++) {
-                System.out.print(ints[j] + " ");
+                System.out.print(rows[j] + " ");
             }
             System.out.println();
         }
