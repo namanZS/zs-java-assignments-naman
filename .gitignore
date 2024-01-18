@@ -4,3 +4,7 @@
 out
 build
 .DS_Store
+
+# Ignore Gradle project-specific cache directory
+.gradle
+app
