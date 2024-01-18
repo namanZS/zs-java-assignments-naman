@@ -1,4 +1,4 @@
-package src.main.java.com.zs.assignment2;
+package com.zs.assignment2;
 
 import java.util.Scanner;
 
