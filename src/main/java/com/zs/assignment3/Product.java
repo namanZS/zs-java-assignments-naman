@@ -14,17 +14,20 @@ public class Product {
         return name;
 
     }
+
+    @Override
+    public String toString() {
+         return "name= " + name  +
+                ", price= " + price +
+                ", returnable= " + isReturnable
+                ;
+    }
+
     public double getPrice() {
         return price;
     }
     public boolean isReturnable(){
         return isReturnable;
-    }
-    public String displayInfo() {
-        return "name= " + name  +
-                ", price= " + price +
-                ", returnable= " + isReturnable
-               ;
     }
 
 

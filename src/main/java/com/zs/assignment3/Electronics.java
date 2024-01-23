@@ -11,8 +11,9 @@ public class Electronics extends Product {
     public String getBrand() {
         return brand;
     }
+
     @Override
-    public String displayInfo() {
+    public String toString() {
         return "name= " + getName() +
                 ", price= " + getPrice() +
                 ", returnable= " + isReturnable() +

@@ -221,7 +221,8 @@ public class Main {
                 int productIndex = 1;
 
                 for (Product product : category.getProducts()) {
-                    System.out.println(productIndex + ". " + product.displayInfo());
+                    System.out.print(productIndex+". ");
+                    System.out.println(product);
                     productIndex++;
                 }
             }

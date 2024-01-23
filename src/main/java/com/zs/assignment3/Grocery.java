@@ -11,8 +11,9 @@ public class Grocery extends Product {
     public String getExpiryDate() {
         return expiryDate;
     }
+
     @Override
-    public String displayInfo() {
+    public String toString() {
         return "name= " + getName() +
                 ", price= " + getPrice() +
                 ", returnable= " + isReturnable() +
