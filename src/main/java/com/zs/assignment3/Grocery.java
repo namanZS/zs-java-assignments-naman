@@ -1,7 +1,7 @@
 package com.zs.assignment3;
 
 public class Grocery extends Product {
-    private String expiryDate;
+    private final String expiryDate;
 
     public Grocery(String name, double price, boolean returnable, String expiryDate) {
         super(name, price, returnable);
@@ -10,5 +10,13 @@ public class Grocery extends Product {
 
     public String getExpiryDate() {
         return expiryDate;
+    }
+    @Override
+    public String displayInfo() {
+        return "name= " + getName() +
+                ", price= " + getPrice() +
+                ", returnable= " + isReturnable() +
+                ", expiryDate= " + expiryDate
+                ;
     }
 }

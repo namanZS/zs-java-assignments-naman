@@ -1,9 +1,9 @@
 package com.zs.assignment3;
 
 public class Product {
-    private String name;
-    private double price;
-    private boolean isReturnable;
+    private final String name;
+    private final double price;
+    private final boolean isReturnable;
     Product(String name,double price,boolean isReturnable){
         this.name=name;
         this.price=price;
@@ -19,6 +19,12 @@ public class Product {
     }
     public boolean isReturnable(){
         return isReturnable;
+    }
+    public String displayInfo() {
+        return "name= " + name  +
+                ", price= " + price +
+                ", returnable= " + isReturnable
+               ;
     }
 
 

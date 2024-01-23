@@ -1,14 +1,17 @@
 package com.zs.assignment3;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
-    private String name;
-    private List<Product> products;
+    private final String name;
+    private final List<Product> products;
+    private final ProductCategory productCategory;
 
-    public Category(String name) {
-        this.name = name;
+    public Category(ProductCategory productCategory) {
+        this.name = productCategory.name();
         this.products = new ArrayList<>();
+        this.productCategory = productCategory;
     }
 
     public String getName() {
@@ -25,5 +28,9 @@ public class Category {
 
     public void removeProduct(Product product) {
         products.remove(product);
+    }
+
+    public ProductCategory getCategoryType() {
+        return productCategory;
     }
 }

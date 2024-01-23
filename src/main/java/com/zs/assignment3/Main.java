@@ -66,48 +66,47 @@ public class Main {
      */
     private static void addProduct() {
         while (true) {
-            if(categoryIsEmpty()){
+            if (categoryIsEmpty()) {
                 return;
             }
-            else {
-                getAllCategory();
-            }
-            System.out.print("Enter the number of the category to add the product (0 to go back to menu): ");
-            int categoryNumber = input.nextInt();
 
+            getAllCategory();
+
+            System.out.print("Enter the number of the category to add a product (0 to go back to menu): ");
+            int categoryNumber = input.nextInt();
             if (categoryNumber == 0) {
                 return;
             }
+            if (categoryNumber < 1 || categoryNumber > catalogue.getCategories().size()) {
+                System.out.println("Invalid category number. Please try again.");
+                return;
+            }
+            Category category = catalogue.getCategories().get(categoryNumber - 1);
+            System.out.print("Enter product name: ");
+            String name = input.next();
+            System.out.print("Enter product price: ");
+            double price = input.nextDouble();
 
-            if (categoryNumber >= 1 && categoryNumber <= catalogue.getCategories().size()) {
-                Category category = catalogue.getCategories().get(categoryNumber - 1);
-                System.out.print("Enter product name: ");
-                String name = input.next();
-                System.out.print("Enter product price: ");
-                double price = input.nextDouble();
+            boolean returnable = category.getCategoryType().isReturnable();
 
-                boolean returnable = true;
+            switch (category.getCategoryType()) {
 
-                if (category.getName().equalsIgnoreCase("PersonalCare")) {
-                    returnable = false;
-                } else if (category.getName().equalsIgnoreCase("Grocery")) {
+                case Grocery:
                     System.out.print("Enter expiry date (yyyy-mm-dd): ");
                     String expiryDate = input.next();
                     category.addProduct(new Grocery(name, price, returnable, expiryDate));
-                } else if (category.getName().equalsIgnoreCase("Electronics")) {
+                    break;
+                case Electronics:
                     System.out.print("Enter brand: ");
                     String brand = input.next();
                     category.addProduct(new Electronics(name, price, returnable, brand));
-                } else {
+                    break;
+                default:
                     category.addProduct(new Product(name, price, returnable));
-                }
-
-                System.out.println("Product added successfully.");
-
-                break;
-            } else {
-                System.out.println("Invalid category number. Please try again.");
+                    break;
             }
+
+            System.out.println("Product added successfully.");
         }
     }
 
@@ -115,60 +114,73 @@ public class Main {
      * Method to delete a product from a specific category.
      */
     private static void deleteProduct() {
-        while (true) {
-            if(categoryIsEmpty()){
-                return;
-            }
-            else {
-                getAllCategory();
-            }
+        if (categoryIsEmpty()) {
+            return;
+        }
 
-            System.out.print("Enter the number of the category to delete a product (0 to go back to menu): ");
-            int categoryNumber = input.nextInt();
+        getAllCategory();
 
-            if (categoryNumber == 0) {
-                return;
-            }
+        System.out.print("Enter the number of the category to delete a product (0 to go back to menu): ");
+        int categoryNumber = input.nextInt();
 
-            if (categoryNumber >= 1 && categoryNumber <= catalogue.getCategories().size()) {
-                Category category = catalogue.getCategories().get(categoryNumber - 1);
+        if (categoryNumber == 0) {
+            return;
+        }
+        if (categoryNumber < 1 || categoryNumber > catalogue.getCategories().size()) {
+            System.out.println("Invalid category number. Please try again.");
+            return;
+        }
+        Category category = catalogue.getCategories().get(categoryNumber - 1);
 
-                if (category.getProducts().isEmpty()) {
-                    System.out.println("No products available in this category.");
-                    return;
-                }
+        if (category.getProducts().isEmpty()) {
+            System.out.println("No products available in this category.");
+            return;
+        }
 
-                int productIndex = 1;
-                System.out.println("Products in " + category.getName() + ":");
-                for (Product product : category.getProducts()) {
-                    System.out.println(productIndex + ". " + product.getName());
-                    productIndex++;
-                }
+        int productIndex = 1;
+        System.out.println("Products in " + category.getName() + ":");
+        for (Product product : category.getProducts()) {
+            System.out.println(productIndex + ". " + product.getName());
+            productIndex++;
+        }
 
-                System.out.print("Enter the number of the product to delete: ");
-                int productNumber = input.nextInt();
+        System.out.print("Enter the number of the product to delete: ");
+        int productNumber = input.nextInt();
 
-                if (productNumber >= 1 && productNumber <= category.getProducts().size()) {
-                    Product product = category.getProducts().get(productNumber - 1);
-                    category.removeProduct(product);
-                    System.out.println("Product removed successfully.");
-                    break;
-                } else {
-                    System.out.println("Invalid product number. Please try again.");
-                }
-            } else {
-                System.out.println("Invalid category number. Please try again.");
-            }
+        if (productNumber < 1 || productNumber > category.getProducts().size()) {
+            System.out.println("Invalid product number. Please try again.");
+        } else {
+            Product product = category.getProducts().get(productNumber - 1);
+            category.removeProduct(product);
+            System.out.println("Product removed successfully.");
         }
     }
+
 
     /**
      * Method to add a new category to the catalogue.
      */
     private static void addCategory() {
-        System.out.print("Enter category name: ");
-        String categoryName = input.next();
-        catalogue.addCategory(new Category(categoryName));
+        System.out.print("Enter category name (PC for PersonalCare, GR for Grocery, EL for Electronics): ");
+        String categoryCode = input.next().toUpperCase();
+
+        ProductCategory productCategory;
+        switch (categoryCode) {
+            case "PC":
+                productCategory = ProductCategory.PersonalCare;
+                break;
+            case "GR":
+                productCategory = ProductCategory.Grocery;
+                break;
+            case "EL":
+                productCategory = ProductCategory.Electronics;
+                break;
+            default:
+                productCategory = ProductCategory.Other;
+                break;
+        }
+
+        catalogue.addCategory(new Category(productCategory));
         System.out.println("Category added successfully.");
     }
 
@@ -176,8 +188,7 @@ public class Main {
      * Method to display all available categories.
      */
     private static void getAllCategory() {
-        if (categoryIsEmpty()) {2
-
+        if (categoryIsEmpty()) {
             return;
         }
 
@@ -194,7 +205,8 @@ public class Main {
      * Method to display all products in all categories.
      */
     private static void getAllProduct() {
-        if (categoryIsEmpty()) {
+        if (catalogue.getCategories().isEmpty()) {
+            System.out.println("No categories available.");
             return;
         }
 
@@ -209,20 +221,7 @@ public class Main {
                 int productIndex = 1;
 
                 for (Product product : category.getProducts()) {
-                    String productInfo;
-
-                    if (product instanceof Grocery) {
-                        productInfo = product.getName() + ", Price: " + product.getPrice() +
-                                ", Expiry Date: " + ((Grocery) product).getExpiryDate();
-                    } else if (product instanceof Electronics) {
-                        productInfo = product.getName() + ", Price: " + product.getPrice() +
-                                ", Brand: " + ((Electronics) product).getBrand();
-                    } else {
-                        productInfo = product.getName() + ", Price: " + product.getPrice() +
-                                ", Returnable: " + product.isReturnable();
-                    }
-
-                    System.out.println(productIndex + ". " + productInfo);
+                    System.out.println(productIndex + ". " + product.displayInfo());
                     productIndex++;
                 }
             }
@@ -230,4 +229,5 @@ public class Main {
             System.out.println();
         }
     }
+
 }

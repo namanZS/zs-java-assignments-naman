@@ -1,7 +1,7 @@
 package com.zs.assignment3;
 
 public class Electronics extends Product {
-    private String brand;
+    private final String brand;
 
     public Electronics(String name, double price, boolean returnable, String brand) {
         super(name, price, returnable);
@@ -10,5 +10,13 @@ public class Electronics extends Product {
 
     public String getBrand() {
         return brand;
+    }
+    @Override
+    public String displayInfo() {
+        return "name= " + getName() +
+                ", price= " + getPrice() +
+                ", returnable= " + isReturnable() +
+                ", brand= " + brand
+                ;
     }
 }
