@@ -1,80 +1,75 @@
 package com.zs.assignment4;
-import java.util.*;
-class LruCache<K,V> {
-    class Node{
-        K key;
-        V val;
-        Node next;
-        Node prev;
-        Node(K key, V val){
-            this.key = key;
-            this.val = val;
-            this.next = null;
-            this.prev = null;
-        }
-    }
-    private int capacity;
-    private Map<K,Node> map;
-    private Node head;
-    private Node tail;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class LruCache<K, V> {
+    private final int capacity;
+    private final Map<K, Node<K, V>> cache;
+    private Node<K, V> head;
+    private Node<K, V> tail;
+
     public LruCache(int capacity) {
         this.capacity = capacity;
-        head = new Node(null,null);
-        tail = new Node(null,null);
+        this.cache = new HashMap<>();
+        this.head = new Node<>(null, null);
+        this.tail = new Node<>(null, null);
         head.next = tail;
         tail.prev = head;
-        this.map = new HashMap<>();
     }
-    private void addToFront(Node node){
-        head.next.prev = node;
+
+    private void addToFront(Node<K, V> node) {
         node.next = head.next;
-        head.next = node;
         node.prev = head;
+        head.next.prev = node;
+        head.next = node;
     }
-    private void remove(Node node){
+
+    private void remove(Node<K, V> node) {
         node.prev.next = node.next;
         node.next.prev = node.prev;
-
     }
+
     public V get(K key) {
-        if(map.containsKey(key)){
-            Node temp = map.get(key);
+        if (cache.containsKey(key)) {
+            Node<K, V> temp = cache.get(key);
             remove(temp);
             addToFront(temp);
-            return temp.val;
+            return temp.value;
         }
         return null;
     }
+
     public void remove(K key) {
-        Node node = map.get(key);
+        Node<K, V> node = cache.get(key);
         if (node != null) {
             remove(node);
-            map.remove(key);
+            cache.remove(key);
         }
     }
 
     public void put(K key, V value) {
-        if(map.containsKey(key)){
-            Node temp = map.get(key);
+        if (cache.containsKey(key)) {
+            Node<K, V> temp = cache.get(key);
             remove(temp);
-            map.remove(temp.key);
-        }
-        else if(map.size() == capacity){
-            Node lruNode = tail.prev;
+            cache.remove(temp.key);
+        } else if (cache.size() == capacity) {
+            Node<K, V> lruNode = tail.prev;
             remove(lruNode);
-            map.remove(lruNode.key);
+            cache.remove(lruNode.key);
         }
-        Node newNode = new Node(key, value);
+        Node<K, V> newNode = new Node<>(key, value);
         addToFront(newNode);
-        map.put(key,newNode);
+        cache.put(key, newNode);
     }
-    public void printCache(){
-        if (map.isEmpty()){
+
+    public void printCache() {
+        if (cache.isEmpty()) {
             System.out.println("Cache is Empty");
             return;
         }
-        for (K key:map.keySet()){
-            System.out.println("Key :"+key+"-> Value : "+map.get(key).val);
+        for (K key : cache.keySet()) {
+            System.out.println("Key: " + key + " -> Value: " + cache.get(key).value);
         }
     }
 }
