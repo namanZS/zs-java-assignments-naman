@@ -21,8 +21,8 @@ public class StudentService {
         studentRepository.createStudentTable();
         logger.info("Generating and Inserting students records to db......");
         for (int i = 1; i <= recordCount; i++) {
-            String firstName = "FirstName" + i;
-            String lastName = "LastName" + i;
+            String firstName = "FName" + i;
+            String lastName = "LName" + i;
             String mobile = "1234567890";
 
             Student student = new Student();
@@ -41,8 +41,6 @@ public class StudentService {
             logger.info("No data found in ResultSet.");
             return;
         }
-
-        // Use try-with-resources to ensure FileWriter is closed
         try (FileWriter fileWriter = new FileWriter(filePath, true)) {
             System.out.println("Data Fetched successfully....");
             logger.info("Data Fetched successfully....");
