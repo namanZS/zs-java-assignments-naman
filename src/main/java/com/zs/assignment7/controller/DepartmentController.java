@@ -11,9 +11,9 @@ public class DepartmentController {
      *
      * @throws SQLException if there is an issue with database.
      */
+    DepartmentService departmentService=new DepartmentService();
 
     public  void AssignDepartments() throws SQLException {
-        DepartmentService departmentService=new DepartmentService();
-        departmentService.AllotDepartments();
+        departmentService.allotDepartments();
     }
 }

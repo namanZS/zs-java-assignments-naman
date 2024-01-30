@@ -1,27 +1,23 @@
 package com.zs.assignment7.Repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.sql.*;
 import java.util.Random;
 
 public class DepartmentRepository {
-    private Connection connection;
+    private final Connection connection;
+    private static final Logger logger = LogManager.getLogger(StudentRepository.class);
 
 
-    public DepartmentRepository(){
-        String jdbcUrl = "jdbc:postgresql://localhost:5432/collegedb";
-        String username = "postgres";
-        String password = "password";
-        try {
-            connection= DriverManager.getConnection(jdbcUrl, username, password);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
+    public DepartmentRepository() throws SQLException {
+try{
+    connection =BuildConnection.getConnection();
+} catch (SQLException e) {
+    logger.error("Connection error");
+    throw new SQLException("Connection error");
+}
     }
     public void createDepartmentTable() throws SQLException {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS department (" +
@@ -31,6 +27,7 @@ public class DepartmentRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(createTableSQL);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            logger.error("Error in creating department table");
             throw new RuntimeException(e);
         }
     }
@@ -46,25 +43,36 @@ public class DepartmentRepository {
             preparedStatement.setString(1, departmentName);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            logger.error("Inserting department record");
             throw new RuntimeException("Error inserting department: " + e.getMessage(), e);
         }
     }
-    public  void assignDepartments() throws SQLException {
+
+    public void assignDepartments() throws SQLException {
+        String selectQuery = "SELECT id FROM student";
         String updateQuery = "UPDATE student SET department_id = ? WHERE id = ?";
         Random random = new Random();
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
-            for (int studentId = 1; studentId <= 1000000; studentId++) {
-                int departmentId = random.nextInt(3);
 
-                preparedStatement.setInt(1, departmentId);
-                preparedStatement.setInt(2, studentId);
+            PreparedStatement selectStatement = connection.prepareStatement(selectQuery);
+            ResultSet resultSet = selectStatement.executeQuery();
 
-                preparedStatement.executeUpdate();
+
+            PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+            while (resultSet.next()) {
+                int studentId = resultSet.getInt("id");
+                int departmentId = random.nextInt(3)+1;
+
+                updateStatement.setInt(1, departmentId);
+                updateStatement.setInt(2, studentId);
+
+                updateStatement.executeUpdate();
             }
         } catch (SQLException e) {
+            logger.error("Error in assigning Departments");
             throw new RuntimeException(e);
         }
     }
+
 }
