@@ -1,19 +1,21 @@
 package com.zs.assignment9.Repository;
+import com.zs.assignment4.Main;
 import com.zs.assignment9.models.Student;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
 public class StudentRepository {
     private static Connection  connection;
+    private static final Logger logger = LogManager.getLogger(StudentRepository.class);
+
     public StudentRepository(){
-        String jdbcUrl = "jdbc:postgresql://localhost:5432/collegedb";
-        String username = "postgres";
-        String password = "password";
         try {
-            connection= DriverManager.getConnection(jdbcUrl, username, password);
+            connection= BuildConnection.getConnection();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error in creating database connection");
 
         }
 
@@ -28,21 +30,9 @@ public class StudentRepository {
             preparedStatement.executeUpdate();
             return student;
         } catch (SQLException e) {
+            logger.error("Error in inserting student");
             throw new RuntimeException(e);
 
-        }
-    }
-    public ResultSet getStudentData()throws SQLException{
-        String query = "SELECT s.id, s.first_name,s.last_name, s.mobile , d.name " +
-                "FROM student s " +
-                "JOIN department d ON s.department_id = d.id";
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            return preparedStatement.executeQuery();
-        }catch (SQLException e) {
-            e.printStackTrace();
-            return null;
         }
     }
     public Student getStudentById(int id)throws SQLException{
@@ -53,8 +43,8 @@ public class StudentRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             return (Student) preparedStatement.executeQuery();
         }catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            logger.error("Error in getting student by id ");
+            throw new RuntimeException(e);
         }
     }
 }

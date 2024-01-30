@@ -6,6 +6,7 @@ import com.zs.assignment9.models.Student;
 import java.sql.SQLException;
 
 public class StudentService {
+    private final StudentRepository studentRepository;
     public StudentService() {
         studentRepository=new StudentRepository();
 
@@ -14,8 +15,6 @@ public class StudentService {
    public StudentService(StudentRepository studentRepository){
         this.studentRepository=studentRepository;
     }
-
-    StudentRepository studentRepository;
     public Student insertRecord(String firstName, String lastName) throws SQLException {
         Student student = new Student();
         student.setFirstName(firstName);
@@ -25,6 +24,6 @@ public class StudentService {
     }
     public Student getStudent(int id) throws SQLException {
 
-       return (Student) studentRepository.getStudentById(id);
+       return studentRepository.getStudentById(id);
     }
 }
