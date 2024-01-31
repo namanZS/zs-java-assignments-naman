@@ -1,0 +1,28 @@
+4fd5d5b, Assignment 4 | NAMAN GUPTA | extracted nested classes, 1706099777, naman-zs
+3438b63, Assignment 4| NAMAN GUPTA | implemented LRU cache functionality and added it to product catalogue, 1706013730, naman-zs
+5ccd0c7, Assignment 3| NAMAN GUPTA | changed the sout to toStrings, 1706003679, naman-zs
+4af5521, Assignment 3| NAMAN GUPTA | added enums and improved code readability, 1705996349, naman-zs
+ebcff24, Assignment 3 | NAMAN GUPTA | added all checks, 1705926570, Shobit-zs
+ce0ffd8, Assignmnet 3 | NAMAN GUPTA | Created Product Catalogue, 1705904107, Shobit-zs
+fbd270b, Configured gradle, 1705903349, naman-zs
+8a8b394, Assignment 3 | NAMAN GUPTA | created product catalogue, 1705554429, naman-zs
+b73fd9e, Assignment-2 |NAMAN GUPTA | refactored Code, 1705403186, naman-zs
+cd84261, Assignmnet 2| NAMAN GUPTA | improved code readability, 1705393978, naman-zs
+5737195, Assignment 2 | NAMAN GUPTA | Added java docs and applied abstraction, 1705389728, naman-zs
+f8e9457, Assignment-2 | NAMAN GUPTA | seperated in packages, 1705387301, naman-zs
+65b6211, Assignment 2 | NAMAN GUPTA |seperated class and improved multiplication Operation, 1705303511, naman-zs
+843def9, handled invalid user inputs, 1705254198, naman-zs
+6006a19, Assignmen 2 | NAMAN GUPTA | worked on user inputs and corner cases, 1705059191, naman-zs
+5713636, Assignment 2 |NAMAN GUPTA| created matrixOperations, 1704974357, naman-zs
+29c0de5, Assignment-1 | NAMAN GUPTA | rectified EOF error, 1704969229, naman-zs
+51c7bf8, Assignment-1 | NAMAN GUPTA | rectified EOF error, 1704969071, naman-zs
+1cd448b, Assignment 1 | NAMAN GUPTA | final changes, 1704966747, naman-zs
+2bbda80, Assignment-1 | NAMAN GUPTA | updated .gitignore file, 1704956552, naman-zs
+8f52b9e, Assignment-1 | NAMAN GUPTA | done suggested changes, 1704956345, naman-zs
+8048d27, Assignment-1 |NAMAN GUPTA |  updated .gitignore file, 1704889659, naman-zs
+e3954c5, assignment 3 |NAMAN GUPTA | created systemInfo class, 1704888852, naman-zs
+3d426b0, Revert "rectified error in assignment 1", 1704888512, naman-zs
+0df64aa, rectified error in assignment 1, 1704887711, naman-zs
+fcc3c14, Assignment-1, 1704886832, naman-zs
+64c2f52, added .gitignore file, 1704882104, Shobit-zs
+d999a89, Initial commit, 1704881830, naman-zs
