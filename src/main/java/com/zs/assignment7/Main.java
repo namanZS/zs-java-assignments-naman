@@ -7,20 +7,20 @@ import java.util.Scanner;
 
 
 public class Main{
-    private static final StudentController studentController=new StudentController();
-    private static final DepartmentController departmentController=new DepartmentController();
-    private static final Scanner input = new Scanner(System.in);
-
+    private static StudentController studentController;
+    private static DepartmentController departmentController;
+    static {
+        studentController=new StudentController();
+        departmentController=new DepartmentController();
+    }
     public static void main(String[]args){
-        System.out.println("Please enter the number of records you want to insert: ");
-        int count=input.nextInt();
+        int count=100000;
         try{
-            studentController.GenerateMillionRecords(count);
-            departmentController.AssignDepartments();
-            studentController.ExportIntoFile();
+            studentController.generateMillionRecords(count);
+            departmentController.assignDepartments();
+            studentController.exportIntoFile();
         }
         catch (SQLException e) {
-
             throw new RuntimeException(e);
         }
 

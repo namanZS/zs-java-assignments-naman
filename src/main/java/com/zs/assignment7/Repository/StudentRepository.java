@@ -12,7 +12,6 @@ import java.sql.*;
 public class StudentRepository {
     private static final Logger logger = LogManager.getLogger(StudentRepository.class);
     public StudentRepository(){
-
     }
     public void createStudentTable(Connection connection) throws SQLException {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS student (" +

@@ -7,8 +7,6 @@ public class Student {
     private String mobile;
     private Department department;
 
-    // Constructors, getters, and setters
-
     public Student() {
     }
 

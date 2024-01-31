@@ -7,19 +7,11 @@ import java.sql.*;
 import java.util.Random;
 
 public class DepartmentRepository {
-    private final Connection connection;
     private static final Logger logger = LogManager.getLogger(StudentRepository.class);
+    public DepartmentRepository() {
 
-
-    public DepartmentRepository() throws SQLException {
-try{
-    connection =BuildConnection.getConnection();
-} catch (SQLException e) {
-    logger.error("Connection error");
-    throw new SQLException("Connection error");
-}
     }
-    public void createDepartmentTable() throws SQLException {
+    public void createDepartmentTable(Connection connection) throws SQLException {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS department (" +
                 "id SERIAL PRIMARY KEY," +
                 "name VARCHAR(255) NOT NULL)";
@@ -31,12 +23,12 @@ try{
             throw new RuntimeException(e);
         }
     }
-    public void createDepartments() throws SQLException {
-        insertDepartment("CS");
-        insertDepartment("EE");
-        insertDepartment("Mech");
+    public void createDepartments(Connection connection) throws SQLException {
+        insertDepartment("CS",connection);
+        insertDepartment("EE",connection);
+        insertDepartment("Mech",connection);
     }
-    private void insertDepartment(String departmentName) {
+    private void insertDepartment(String departmentName,Connection connection) {
         String insertQuery = "INSERT INTO department (name) VALUES (?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
@@ -48,7 +40,7 @@ try{
         }
     }
 
-    public void assignDepartments() throws SQLException {
+    public void assignDepartments(Connection connection) throws SQLException {
         String selectQuery = "SELECT id FROM student";
         String updateQuery = "UPDATE student SET department_id = ? WHERE id = ?";
         Random random = new Random();
@@ -58,7 +50,6 @@ try{
             PreparedStatement selectStatement = connection.prepareStatement(selectQuery);
             ResultSet resultSet = selectStatement.executeQuery();
 
-
             PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
             while (resultSet.next()) {
                 int studentId = resultSet.getInt("id");
@@ -66,7 +57,6 @@ try{
 
                 updateStatement.setInt(1, departmentId);
                 updateStatement.setInt(2, studentId);
-
                 updateStatement.executeUpdate();
             }
         } catch (SQLException e) {

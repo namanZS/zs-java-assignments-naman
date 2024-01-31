@@ -15,28 +15,27 @@ import java.util.zip.GZIPInputStream;
 
 public class StudentService {
     private final Connection connection;
+    private  final StudentRepository studentRepository;
+    private static final Logger logger = LogManager.getLogger(StudentService.class);
     public StudentService(){
+        studentRepository=new StudentRepository();
         try {
             connection= BuildConnection.getConnection();
+            studentRepository.createStudentTable(connection);
         } catch (SQLException e) {
             logger.error("Error in making student db connection");
             throw new RuntimeException(e);
-
         }
 
     }
-    private static final Logger logger = LogManager.getLogger(StudentService.class);
 
-    private  final StudentRepository studentRepository=new StudentRepository();
 
     public void generateAndInsertData(int recordCount) throws SQLException {
-        studentRepository.createStudentTable(connection);
         logger.info("Generating and Inserting students records to db......");
         for (int i = 1; i <= recordCount; i++) {
             String firstName = "FName" + i+1;
             String lastName = "LName" + i;
             String mobile = "100023456";
-
             Student student = new Student();
             student.setFirstName(firstName);
             student.setLastName(lastName);

@@ -5,12 +5,15 @@ import com.zs.assignment7.services.StudentService;
 import java.sql.SQLException;
 
 public class StudentController {
-   private static final StudentService studentService=new StudentService();
+   private final StudentService studentService;
+    public StudentController() {
+        studentService=new StudentService();
+    }
 
-    public  void GenerateMillionRecords(int records) throws SQLException {
+    public void generateMillionRecords(int records) throws SQLException {
         studentService.generateAndInsertData(records);
     }
-    public void ExportIntoFile() throws SQLException {
+    public void exportIntoFile() throws SQLException {
         studentService.exportIntoFile();
     }
 }
