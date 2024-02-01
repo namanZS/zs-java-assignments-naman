@@ -17,14 +17,19 @@ public class StudentService {
     private final Connection connection;
     private  final StudentRepository studentRepository;
     private static final Logger logger = LogManager.getLogger(StudentService.class);
-    public StudentService(){
+    public StudentService() throws SQLException, IOException {
         studentRepository=new StudentRepository();
         try {
             connection= BuildConnection.getConnection();
             studentRepository.createStudentTable(connection);
         } catch (SQLException e) {
-            logger.error("Error in making student db connection");
-            throw new RuntimeException(e);
+            logger.error("Error in accessing student db connection");
+            throw new SQLException(e);
+
+        }
+        catch(IOException e){
+            throw new IOException(e);
+
         }
 
     }
@@ -45,7 +50,7 @@ public class StudentService {
         }
         logger.info("Inserted 1 million records successfully!!");
     }
-    public void exportIntoFile() throws SQLException {
+    public void exportIntoFile() throws SQLException, IOException {
         ResultSet result = studentRepository.getStudentData(connection);
         String filePath = "/Users/raramuri/Documents/Zopsmart/zs-java-assignments-naman/src/main/java/com/zs/assignment7/studentData.txt.gz";
 
@@ -70,7 +75,7 @@ public class StudentService {
 
         } catch (IOException e) {
             logger.error("Exported file not found!!");
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
 }
 }

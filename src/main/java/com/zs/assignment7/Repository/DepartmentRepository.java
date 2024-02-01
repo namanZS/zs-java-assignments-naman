@@ -20,7 +20,7 @@ public class DepartmentRepository {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.error("Error in creating department table");
-            throw new RuntimeException(e);
+            throw new SQLException("Error in creating department table");
         }
     }
     public void createDepartments(Connection connection) throws SQLException {
@@ -28,7 +28,7 @@ public class DepartmentRepository {
         insertDepartment("EE",connection);
         insertDepartment("Mech",connection);
     }
-    private void insertDepartment(String departmentName,Connection connection) {
+    private void insertDepartment(String departmentName,Connection connection) throws SQLException {
         String insertQuery = "INSERT INTO department (name) VALUES (?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
@@ -36,7 +36,7 @@ public class DepartmentRepository {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.error("Inserting department record");
-            throw new RuntimeException("Error inserting department: " + e.getMessage(), e);
+            throw new SQLException("Error inserting department record!! ");
         }
     }
 
@@ -46,7 +46,6 @@ public class DepartmentRepository {
         Random random = new Random();
 
         try {
-
             PreparedStatement selectStatement = connection.prepareStatement(selectQuery);
             ResultSet resultSet = selectStatement.executeQuery();
 
@@ -61,7 +60,7 @@ public class DepartmentRepository {
             }
         } catch (SQLException e) {
             logger.error("Error in assigning Departments");
-            throw new RuntimeException(e);
+            throw new SQLException("Error in assigning Departments");
         }
     }
 

@@ -26,7 +26,7 @@ public class StudentRepository {
 
         } catch (SQLException e) {
             logger.error("Error in creating student table!!");
-            throw new RuntimeException(e);
+            throw new SQLException("Error in creating student table!!");
         }
     }
 
@@ -40,7 +40,7 @@ public class StudentRepository {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.error("Error iin inserting student!!");
-            throw new RuntimeException(e);
+            throw new SQLException("Error iin inserting student!!");
         }
     }
     public ResultSet getStudentData(Connection connection)throws SQLException{
@@ -53,7 +53,7 @@ public class StudentRepository {
             return preparedStatement.executeQuery();
         }catch (SQLException e) {
            logger.error("Error in getting student data");
-           throw new RuntimeException(e);
+           throw new SQLException("Error in getting student data");
         }
     }
 }
