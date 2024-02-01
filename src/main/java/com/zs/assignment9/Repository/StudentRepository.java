@@ -28,6 +28,7 @@ public class StudentRepository {
             preparedStatement.setString(1, student.getFirstName());
             preparedStatement.setString(2, student.getLastName());
             preparedStatement.executeUpdate();
+
             return student;
         } catch (SQLException e) {
             logger.error("Error in inserting student");

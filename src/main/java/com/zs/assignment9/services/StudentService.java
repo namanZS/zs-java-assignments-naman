@@ -7,13 +7,8 @@ import java.sql.SQLException;
 
 public class StudentService {
     private final StudentRepository studentRepository;
-    public StudentService() {
-        studentRepository=new StudentRepository();
-
-    }
-
-   public StudentService(StudentRepository studentRepository){
-        this.studentRepository=studentRepository;
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
     public Student insertRecord(String firstName, String lastName) throws SQLException {
         Student student = new Student();
@@ -23,7 +18,6 @@ public class StudentService {
 
     }
     public Student getStudent(int id) throws SQLException {
-
        return studentRepository.getStudentById(id);
     }
 }
