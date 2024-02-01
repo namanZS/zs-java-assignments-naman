@@ -1,10 +1,12 @@
 package com.zs.assignment10.service;
 
 import com.zs.assignment10.model.Product;
+import com.zs.assignment10.repository.BuildConnection;
 import com.zs.assignment10.repository.ProductRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,72 +14,40 @@ import java.sql.SQLException;
 
 import java.util.*;
 public class ProductService {
-   ProductRepository productRepository=new ProductRepository();
-    private static final Logger logger = LogManager.getLogger(BuildConnection.class);
-   private static Connection con;
-    public ProductService() throws SQLException {
-        con= BuildConnection.getConnection();
-        createTable();
+   private final ProductRepository productRepository;
+   private static final Logger logger = LogManager.getLogger(BuildConnection.class);
+   private final Connection con;
+    public ProductService() throws SQLException, IOException {
+        productRepository=new ProductRepository();
+       try {
+            con = BuildConnection.getConnection();
+        }catch (SQLException e) {
+           logger.error("Error in making student db connection");
+           throw new SQLException(e.getMessage());
+       } catch (IOException e) {
+           throw new IOException(e);
+       }
+
+    }
+    public ProductService(ProductRepository productRepository,Connection conn){
+        this.productRepository=productRepository;
+        this.con =conn;
     }
 
-    public ProductService(Connection mockConnection, ProductRepository mockRepository) throws SQLException {
-        con = mockConnection;
-        this.productRepository = mockRepository;
-    }
-
-    public void createTable() throws SQLException {
-        try{
-        String createTableQuery="CREATE TABLE IF NOT EXISTS product ("
-                + "id SERIAL PRIMARY KEY ,"
-                + "name VARCHAR(255),"
-                + "price DOUBLE PRECISION"
-                + ")";
-        PreparedStatement preparedStatement = con.prepareStatement(createTableQuery);
-        preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-        throw new RuntimeException(e);
-    }
-    }
     public List<Product> getAllProducts() throws SQLException {
-        List<Product> productList = new ArrayList<>();
-
-        ResultSet result = productRepository.getAllProduct(con);
-        while (result.next()) {
-            int id = result.getInt("id");
-            String name = result.getString("name");
-            double price = result.getDouble("price");
-            Product product = new Product(id, name, price);
-            productList.add(product);
-        }
-        return productList;
+         return productRepository.getAllProduct(con);
     }
     public Product findProductById(int id) throws SQLException {
 
-       ResultSet result = productRepository.findProductById(id,con);
-       Product newProduct= null;
-
-        if (result.next()) {
-            String name = result.getString("name");
-            double price = result.getDouble("price");
-            newProduct =new Product(id, name, price);
-        }
-        return newProduct;
-
+       return productRepository.findProductById(id,con);
     }
-    public boolean deleteProductById(int id) {
-
+    public boolean deleteProductById(int id) throws SQLException {
         return productRepository.deleteProductById(id,con);
     }
     public boolean checkIfProductExists(int id) throws SQLException {
-        ResultSet result =  productRepository.checkIfProductExists(id,con);
-        return result.next();
+        return productRepository.checkIfProductExists(id,con);
     }
     public Product saveProduct(String name, double price) throws SQLException {
-        ResultSet generatedKeys= productRepository.insertProduct(name,price,con);
-        if (generatedKeys.next()) {
-            int id = generatedKeys.getInt(1);
-            return new Product(id, name, price);
-        }
-        return null;
+        return productRepository.insertProduct(name,price,con);
     }
 }

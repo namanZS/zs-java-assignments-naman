@@ -2,12 +2,13 @@ package com.zs.assignment10;
 
 import com.zs.assignment10.controller.ProductController;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
     static Scanner scanner = new Scanner(System.in);
-    public static void main(String []args) throws SQLException {
+    public static void main(String []args) throws SQLException, IOException {
         ProductController controller =new ProductController();
         while(true){
             System.out.println("1. Find All products");

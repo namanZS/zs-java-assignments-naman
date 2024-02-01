@@ -1,42 +1,70 @@
 package com.zs.assignment10.repository;
 
 import com.zs.assignment10.model.Product;
-import com.zs.assignment10.service.BuildConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductRepository {
-    private static final Logger logger = LogManager.getLogger(BuildConnection.class);
-    public ProductRepository() throws SQLException {
-    }
-    public ResultSet getAllProduct(Connection con){
+    private static final Logger logger = LogManager.getLogger(ProductRepository.class);
+    public List<Product> getAllProduct(Connection con) throws SQLException {
+        List<Product>productList=new ArrayList<>();
     try{
+
         String Query = "SELECT id, name, price FROM product";
     PreparedStatement preparedStatement = con.prepareStatement(Query);
-    return preparedStatement.executeQuery();
+
+    ResultSet result =preparedStatement.executeQuery();
+        while (result.next()) {
+            int id = result.getInt("id");
+            String name = result.getString("name");
+            double price = result.getDouble("price");
+            Product product = new Product(id, name, price);
+            productList.add(product);
+        }
+        return productList;
 
     } catch (SQLException e) {
-        logger.error("Error in getting all Products!!");
+        logger.error("Error in getAllProduct from repository layer");
+        throw new SQLException("Error in getting all Products!!");
     }
-    return null;
 }
+    public void createTable(Connection con) throws SQLException {
+        try{
+            String createTableQuery="CREATE TABLE IF NOT EXISTS product ("
+                    + "id SERIAL PRIMARY KEY ,"
+                    + "name VARCHAR(255),"
+                    + "price DOUBLE PRECISION"
+                    + ")";
+            PreparedStatement preparedStatement = con.prepareStatement(createTableQuery);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Error in creating product table");
+        }
+    }
 
-    public ResultSet findProductById(int id, Connection con) {
+    public Product findProductById(int id, Connection con) throws SQLException {
+        if(!checkIfProductExists(id,con)) return new Product();
         try {
             String findProductQuery = "SELECT id, name, price FROM product WHERE id = ?";
             PreparedStatement preparedStatement = con.prepareStatement(findProductQuery);
             preparedStatement.setInt(1, id);
-            return preparedStatement.executeQuery();
+            ResultSet result= preparedStatement.executeQuery();
+            result.next();
+            String name= result.getString("name");
+            double price=result.getDouble("price");
+            return new Product(id,name,price);
         } catch (SQLException e) {
             logger.error("Error in finding Product by ID!!");
+            throw new SQLException("Error in finding Product by ID!!");
         }
-        return null;
     }
 
-    public boolean deleteProductById(int id, Connection con) {
+    public boolean deleteProductById(int id, Connection con) throws SQLException {
+        if(!checkIfProductExists(id,con))return false;
         try {
             String deleteProductQuery = "DELETE FROM product WHERE id = ?";
             PreparedStatement preparedStatement = con.prepareStatement(deleteProductQuery);
@@ -47,43 +75,43 @@ public class ProductRepository {
 
         } catch (SQLException e) {
             logger.error("Error in deleting Product by ID!!");
+            throw new SQLException("Error in deleting Product by ID!!");
         }
-
-        return false;
     }
 
-    public ResultSet checkIfProductExists(int id, Connection con) {
+    public boolean checkIfProductExists(int id, Connection con) throws SQLException {
         try {
             String checkProductQuery = "SELECT id FROM product WHERE id = ?";
             PreparedStatement preparedStatement = con.prepareStatement(checkProductQuery);
             preparedStatement.setInt(1, id);
-            return preparedStatement.executeQuery();
+            ResultSet result=preparedStatement.executeQuery();
+           return result.next();
 
         } catch (SQLException e) {
             logger.error("Error in checking if Product exists!!");
+            throw new SQLException("Error in checking if Product exists!!");
         }
-        return null;
 
     }
 
-    public ResultSet insertProduct(String name, double price, Connection con) {
+    public Product insertProduct(String name, double price, Connection con) throws SQLException {
+        Product product=null;
         try {
+            createTable(con);
             String insertProductQuery = "INSERT INTO product (name, price) VALUES (?, ?)";
             PreparedStatement preparedStatement = con.prepareStatement(insertProductQuery, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, name);
             preparedStatement.setDouble(2, price);
+            preparedStatement.executeUpdate();
 
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                return preparedStatement.getGeneratedKeys();
-
-            }
-
+            ResultSet keys =preparedStatement.getGeneratedKeys();
+            keys.next();
+             int id= keys.getInt(1);
+             return new Product(id,name,price);
         } catch (SQLException e) {
             logger.error("Error in inserting Product!!");
+            throw new SQLException("Error in inserting Product!!");
         }
 
-        return null;
     }
 }

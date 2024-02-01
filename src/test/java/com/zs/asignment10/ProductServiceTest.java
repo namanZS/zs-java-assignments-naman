@@ -5,108 +5,94 @@ import com.zs.assignment10.repository.ProductRepository;
 import com.zs.assignment10.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-public class ProductServiceTest {
+class ProductServiceTest {
 
-    private ProductService productService;
-    private Connection mockConnection;
+    @Mock
     private ProductRepository mockRepository;
-
+    @Mock
+    private Connection mockConnection;
+    @InjectMocks
+    private ProductService productService;
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() {
         mockConnection = Mockito.mock(Connection.class);
         mockRepository = Mockito.mock(ProductRepository.class);
-        productService = new ProductService(mockConnection, mockRepository);
+        MockitoAnnotations.initMocks(this);
+
     }
 
     @Test
-    void createTable() throws SQLException {
+    void testGetAllProducts() throws SQLException {
         // Arrange
-        PreparedStatement preparedStatementMock = Mockito.mock(PreparedStatement.class);
-        when(mockConnection.prepareStatement(Mockito.anyString())).thenReturn(preparedStatementMock);
-        // Act
-        productService.createTable();
-        // Assert
-        Mockito.verify(preparedStatementMock).executeUpdate();
+        List<Product> expectedProducts = new ArrayList<>();
+        expectedProducts.add(new Product(1, "Test Product", 50.0));
+
+        when(mockRepository.getAllProduct(mockConnection)).thenReturn(expectedProducts);
+
+        List<Product> actualProducts = productService.getAllProducts();
+
+        assertEquals(expectedProducts, actualProducts);
     }
 
     @Test
-    void getAllProducts() throws SQLException {
-        // Arrange
-        ResultSet resultSetMock = Mockito.mock(ResultSet.class);
-        when(mockRepository.getAllProduct(mockConnection)).thenReturn(resultSetMock);
-        when(resultSetMock.next()).thenReturn(true, false);
-
-        // Act
-        List<Product> products = productService.getAllProducts();
-
-        // Assert
-        assertEquals(1, products.size());
-    }
-
-    @Test
-    void findProductById() throws SQLException {
+    void testFindProductById() throws SQLException {
         // Arrange
         int productId = 1;
-        ResultSet resultSetMock = Mockito.mock(ResultSet.class);
-        when(mockRepository.findProductById(productId, mockConnection)).thenReturn(resultSetMock);
-        when(resultSetMock.next()).thenReturn(true);
-        when(resultSetMock.getInt("id")).thenReturn(productId);
-        when(resultSetMock.getString("name")).thenReturn("Test Product");
-        when(resultSetMock.getDouble("price")).thenReturn(50.0);
+        Product expectedProduct = new Product(productId, "Test Product", 50.0);
 
-        Product foundProduct = productService.findProductById(productId);
+        when(mockRepository.findProductById(Mockito.eq(productId), Mockito.any(Connection.class))).thenReturn(expectedProduct);
 
-        assertNotNull(foundProduct);
-        assertEquals(productId, foundProduct.getId());
-        assertEquals("Test Product", foundProduct.getName());
-        assertEquals(50.0, foundProduct.getPrice(), 0.001);
+        Product actualProduct = productService.findProductById(productId);
+
+        assertEquals(expectedProduct, actualProduct);
     }
 
     @Test
-    void deleteProductById() {
+    void testDeleteProductById() throws SQLException {
+        // Arrange
         int productId = 1;
-        when(mockRepository.deleteProductById(productId, mockConnection)).thenReturn(true);
+        when(mockRepository.deleteProductById(Mockito.eq(productId), Mockito.any(Connection.class))).thenReturn(true);
 
-        boolean deleted = productService.deleteProductById(productId);
+        boolean result = productService.deleteProductById(productId);
 
-        assertTrue(deleted);
+        assertTrue(result);
     }
 
     @Test
-    void checkIfProductExists() throws SQLException {
+    void testCheckIfProductExists() throws SQLException {
         int productId = 1;
-        ResultSet resultSetMock = Mockito.mock(ResultSet.class);
-        when(mockRepository.checkIfProductExists(productId, mockConnection)).thenReturn(resultSetMock);
-        when(resultSetMock.next()).thenReturn(true);
+        when(mockRepository.checkIfProductExists(Mockito.eq(productId), Mockito.any(Connection.class))).thenReturn(true);
 
-        boolean productExists = productService.checkIfProductExists(productId);
+        boolean result = productService.checkIfProductExists(productId);
 
-        assertTrue(productExists);
+        assertTrue(result);
     }
 
     @Test
-    void saveProduct() throws SQLException {
+    void testSaveProduct() throws SQLException {
         String productName = "New Product";
         double productPrice = 75.0;
+        Product expectedProduct = new Product(1, productName, productPrice);
 
-        ResultSet generatedKeysMock = Mockito.mock(ResultSet.class);
-        when(mockRepository.insertProduct(productName, productPrice, mockConnection)).thenReturn(generatedKeysMock);
-        when(generatedKeysMock.next()).thenReturn(true);
-        when(generatedKeysMock.getInt(1)).thenReturn(1);
+        when(mockRepository.insertProduct(Mockito.eq(productName), Mockito.eq(productPrice), Mockito.any(Connection.class)))
+                .thenReturn(expectedProduct);
 
-        Product savedProduct = productService.saveProduct(productName, productPrice);
+        Product actualProduct = productService.saveProduct(productName, productPrice);
 
-        assertNotNull(savedProduct);
-        assertEquals(1, savedProduct.getId());
-        assertEquals(productName, savedProduct.getName());
-        assertEquals(productPrice, savedProduct.getPrice());
+        assertNotNull(actualProduct);
+        assertEquals(expectedProduct, actualProduct);
     }
 }

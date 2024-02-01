@@ -2,18 +2,31 @@ package com.zs.assignment10.controller;
 
 import com.zs.assignment10.model.Product;
 import com.zs.assignment10.service.ProductService;
+import com.zs.assignment5.Main;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 public class ProductController {
-    static Scanner scanner = new Scanner(System.in);
-    ProductService productservice=new ProductService();
+    private final Scanner scanner = new Scanner(System.in);
+    private static final Logger logger = LogManager.getLogger(Main.class);
+    private final ProductService productservice;
 
-    public ProductController() throws SQLException {
+    public ProductController() throws SQLException, IOException {
+        productservice=new ProductService();
+
     }
+    public void findAllProducts(){
+        List<Product> productsList=new ArrayList<>();
+        try{
+            productsList=productservice.getAllProducts();
 
-    public void findAllProducts() throws SQLException {
+        }catch(SQLException e){
+            logger.error(e);
+        }
 
-        List<Product> productsList=productservice.getAllProducts();
         if(productsList.isEmpty()){
             System.out.println("No products available!!");
             return;
@@ -23,49 +36,72 @@ public class ProductController {
             System.out.println(product);
 
         }
-
-
     }
 public void findProductById() throws SQLException {
     System.out.println("Enter the Product Id: ");
         int id=readIntValue();
-        Product fetchedProduct=productservice.findProductById(id);
-    System.out.println(fetchedProduct);
+        Product fetchedProduct;
+        try {
+            fetchedProduct = productservice.findProductById(id);
+            if(fetchedProduct.getName()==null) System.out.println("Product id not found!!");
+            else System.out.println(fetchedProduct);
+        }
+        catch(SQLException e){
+            logger.error(e);
+        }
+
 
 }
 
 public void saveProduct() throws SQLException {
     System.out.println("Enter the details:");
-
-    System.out.print("Enter the name of product: ");
     String name=readProductName();
-    System.out.print("Enter the price: ");
     double price=readProductPrice();
-
-    Product fetchedProduct=productservice.saveProduct(name,price);
+    Product fetchedProduct;
+try{
+    fetchedProduct=productservice.saveProduct(name,price);
     System.out.println(fetchedProduct);
 }
-public void deleteProductById(){
+catch(SQLException e){
+    logger.error(e);
+}
+
+
+}
+public void deleteProductById() throws SQLException {
     System.out.println("Enter the Product Id: ");
     int id=readIntValue();
-    boolean successDeleted=productservice.deleteProductById(id);
-    if(successDeleted){
-        System.out.println("product Deleted!!");
+    try{
+        boolean successDeleted=productservice.deleteProductById(id);
+        if(successDeleted){
+            System.out.println("product Deleted!!");
+        }
+        else{
+            System.out.println("Product not found!!");
+        }
     }
-    else{
-        System.out.println("Product not found!!");
+    catch(SQLException e){
+        logger.error(e);
     }
+
 }
 public void checkIfProductExists() throws SQLException {
     System.out.println("Enter the Product Id: ");
     int id = readIntValue();
-    boolean productFound=productservice.checkIfProductExists(id);
-    if(productFound){
-        System.out.println("Found product!!");
+    try{
+        boolean productFound=productservice.checkIfProductExists(id);
+        if(productFound){
+            System.out.println("Found product!!");
+        }
+        else{
+            System.out.println("Product not found");
+        }
+
     }
-    else{
-        System.out.println("Product not found");
+    catch(SQLException e){
+        logger.error(e);
     }
+
 
 }
     private String readProductName() {
@@ -89,7 +125,6 @@ public void checkIfProductExists() throws SQLException {
             System.out.print("Enter the price: ");
             while (!scanner.hasNextDouble()) {
                 System.out.println("Invalid input. Please enter a valid price (numeric value).");
-                scanner.next(); // Consume the invalid input
             }
             price = scanner.nextDouble();
 
@@ -109,16 +144,10 @@ public void checkIfProductExists() throws SQLException {
                 scanner.next();
             }
             value = scanner.nextInt();
-
             if (value < 0) {
                 System.out.println(" Please enter a non-negative value.");
             }
-
         } while (value < 0);
-
         return value;
     }
-
-
-
 }
