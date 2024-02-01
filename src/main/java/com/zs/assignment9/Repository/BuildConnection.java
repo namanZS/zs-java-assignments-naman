@@ -15,7 +15,7 @@ public class BuildConnection {
     private static final Properties properties = new Properties();
     private static Connection connection =null;
 
-    public static Connection getConnection() throws SQLException{
+    public static Connection getConnection() throws SQLException, IOException {
         if(connection!=null) {
             return connection;
         }
@@ -23,6 +23,7 @@ public class BuildConnection {
             properties.load(input);
         } catch (IOException e) {
             logger.error("DbConfig file not found!!");
+            throw new IOException("DbConfig file not found!!");
         }
 
         String dbUrl = properties.getProperty("db.url2");
@@ -32,7 +33,7 @@ public class BuildConnection {
             return connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         } catch (SQLException e) {
             logger.error("Db connection error!!");
-            throw new SQLException(e.getMessage());
+            throw new SQLException("Db connection error!!");
 
         }
 
