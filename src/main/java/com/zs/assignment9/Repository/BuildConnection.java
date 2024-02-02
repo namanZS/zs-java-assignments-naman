@@ -10,11 +10,21 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * The type Build connection.
+ */
 public class BuildConnection {
     private static final Logger logger = LogManager.getLogger(BuildConnection.class);
     private static final Properties properties = new Properties();
     private static Connection connection =null;
 
+    /**
+     * Gets connection.
+     *
+     * @return the connection
+     * @throws SQLException the sql exception
+     * @throws IOException  the io exception
+     */
     public static Connection getConnection() throws SQLException, IOException {
         if(connection!=null) {
             return connection;

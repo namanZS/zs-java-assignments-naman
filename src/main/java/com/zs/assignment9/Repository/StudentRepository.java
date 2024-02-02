@@ -8,10 +8,19 @@ import org.hibernate.annotations.processing.SQL;
 import java.io.IOException;
 import java.sql.*;
 
+/**
+ * The type Student repository.
+ */
 public class StudentRepository {
     private static Connection  connection;
     private static final Logger logger = LogManager.getLogger(StudentRepository.class);
 
+    /**
+     * Instantiates a new Student repository.
+     *
+     * @throws SQLException the sql exception
+     * @throws IOException  the io exception
+     */
     public StudentRepository() throws SQLException, IOException {
         try {
             connection= BuildConnection.getConnection();
@@ -26,6 +35,13 @@ public class StudentRepository {
 
     }
 
+    /**
+     * Insert student student.
+     *
+     * @param student the student
+     * @return the student
+     * @throws SQLException the sql exception
+     */
     public Student insertStudent(Student student) throws SQLException {
         String insertSQL = "INSERT INTO student (first_name, last_name) VALUES (?, ?)";
         try {
@@ -41,6 +57,14 @@ public class StudentRepository {
 
         }
     }
+
+    /**
+     * Gets student by id.
+     *
+     * @param id the id
+     * @return the student by id
+     * @throws SQLException the sql exception
+     */
     public Student getStudentById(int id)throws SQLException{
         String query = "SELECT s.id, s.first_name,s.last_name"+
                 "FROM student s where s.id= "+id;
