@@ -19,7 +19,7 @@ public class BuildConnection {
         if(connection!=null) {
             return connection;
         }
-        try (FileInputStream input = new FileInputStream("/Users/raramuri/Documents/Zopsmart/zs-java-assignments-naman/src/main/resources/dbconfigs.properties")) {
+        try (FileInputStream input = new FileInputStream("/Users/raramuri/Documents/zs-java-assignments-naman/src/main/resources/dbconfigs.properties")) {
             properties.load(input);
         } catch (IOException e) {
             logger.error("DbConfig file not found!!");
@@ -30,7 +30,9 @@ public class BuildConnection {
         String dbUsername = properties.getProperty("db.username");
         String dbPassword = properties.getProperty("db.password");
         try {
-            return connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            logger.info("Db connection successful");
+            return connection;
         } catch (SQLException e) {
             logger.error("Db connection error!!");
             throw new SQLException("Error in creating db connection");

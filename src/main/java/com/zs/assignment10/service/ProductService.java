@@ -14,20 +14,22 @@ import java.sql.SQLException;
 
 import java.util.*;
 public class ProductService {
-   private final ProductRepository productRepository;
-   private static final Logger logger = LogManager.getLogger(BuildConnection.class);
-   private final Connection con;
-    public ProductService() throws SQLException, IOException {
+    private final ProductRepository productRepository;
+    private static final Logger logger = LogManager.getLogger(BuildConnection.class);
+    private Connection con;
+    public ProductService() {
         productRepository=new ProductRepository();
-       try {
+        setup();
+    }
+    void setup()  {
+        try {
             con = BuildConnection.getConnection();
         }catch (SQLException e) {
-           logger.error("Error in making student db connection");
-           throw new SQLException(e.getMessage());
-       } catch (IOException e) {
-           throw new IOException(e);
-       }
+            logger.error("Error in making Product db connection");
 
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
     }
     public ProductService(ProductRepository productRepository,Connection conn){
         this.productRepository=productRepository;
@@ -35,11 +37,10 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts() throws SQLException {
-         return productRepository.getAllProduct(con);
+        return productRepository.getAllProduct(con);
     }
     public Product findProductById(int id) throws SQLException {
-
-       return productRepository.findProductById(id,con);
+        return productRepository.findProductById(id,con);
     }
     public boolean deleteProductById(int id) throws SQLException {
         return productRepository.deleteProductById(id,con);
@@ -50,4 +51,5 @@ public class ProductService {
     public Product saveProduct(String name, double price) throws SQLException {
         return productRepository.insertProduct(name,price,con);
     }
+
 }

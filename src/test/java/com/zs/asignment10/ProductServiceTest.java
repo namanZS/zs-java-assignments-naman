@@ -10,13 +10,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 class ProductServiceTest {
 
@@ -26,73 +27,163 @@ class ProductServiceTest {
     private Connection mockConnection;
     @InjectMocks
     private ProductService productService;
+    private Product expectedProduct;
+
     @BeforeEach
     void setUp() {
         mockConnection = Mockito.mock(Connection.class);
         mockRepository = Mockito.mock(ProductRepository.class);
         MockitoAnnotations.initMocks(this);
+        expectedProduct = new Product(1, "Test Product", 75.0);
+    }
+    @Test
+    void testProductServiceConstructor_SQLException() throws SQLException, IOException {
 
+        assertThrows(SQLException.class, () -> {
+            productService = new ProductService();
+        });
     }
 
+    /**
+     * Test case: Get all products successfully.
+     */
     @Test
-    void testGetAllProducts() throws SQLException {
+    void testGetAllProducts_Success() throws SQLException {
         // Arrange
         List<Product> expectedProducts = new ArrayList<>();
         expectedProducts.add(new Product(1, "Test Product", 50.0));
-
         when(mockRepository.getAllProduct(mockConnection)).thenReturn(expectedProducts);
 
+        // Act
         List<Product> actualProducts = productService.getAllProducts();
 
+        // Assert
+        assertNotNull(actualProducts);
         assertEquals(expectedProducts, actualProducts);
     }
 
+    /**
+     * Test case: Get all products fails.
+     */
     @Test
-    void testFindProductById() throws SQLException {
+    void testGetAllProducts_Fail() throws SQLException {
         // Arrange
-        int productId = 1;
-        Product expectedProduct = new Product(productId, "Test Product", 50.0);
+        when(mockRepository.getAllProduct(mockConnection)).thenThrow(new SQLException("Database connection error"));
 
-        when(mockRepository.findProductById(Mockito.eq(productId), Mockito.any(Connection.class))).thenReturn(expectedProduct);
-
-        Product actualProduct = productService.findProductById(productId);
-
-        assertEquals(expectedProduct, actualProduct);
+        // Act and Assert
+        assertThrows(SQLException.class, () -> productService.getAllProducts());
     }
 
+    /**
+     * Test case: Find product by id successfully.
+     */
     @Test
-    void testDeleteProductById() throws SQLException {
+    void testFindProductById_Success() throws SQLException {
         // Arrange
-        int productId = 1;
-        when(mockRepository.deleteProductById(Mockito.eq(productId), Mockito.any(Connection.class))).thenReturn(true);
+        when(mockRepository.findProductById(Mockito.eq(expectedProduct.getId()), Mockito.any(Connection.class))).thenReturn(expectedProduct);
 
-        boolean result = productService.deleteProductById(productId);
+        // Act
+        Product actualProduct = productService.findProductById(expectedProduct.getId());
 
+        // Assert
+        assertNotNull(actualProduct);
+        assertEquals(expectedProduct.getId(), actualProduct.getId());
+        assertEquals(expectedProduct.getName(), actualProduct.getName());
+        assertEquals(expectedProduct.getPrice(), actualProduct.getPrice());
+    }
+
+    /**
+     * Test case: Find product by id fails.
+     */
+    @Test
+    void testFindProductById_Fail() throws SQLException {
+        // Arrange
+        when(mockRepository.findProductById(Mockito.eq(expectedProduct.getId()), Mockito.any(Connection.class))).thenThrow(new SQLException());
+        // Act and Assert
+        assertThrows(SQLException.class, () -> productService.findProductById(expectedProduct.getId()));
+    }
+
+    /**
+     * Test case: Delete product by id successfully.
+     */
+    @Test
+    void testDeleteProductById_Success() throws SQLException {
+        // Arrange
+        when(mockRepository.deleteProductById(Mockito.eq(expectedProduct.getId()), Mockito.any(Connection.class))).thenReturn(true);
+
+        // Act
+        boolean result = productService.deleteProductById(expectedProduct.getId());
+
+        // Assert
         assertTrue(result);
     }
 
+    /**
+     * Test case: Delete product by id fails.
+     */
     @Test
-    void testCheckIfProductExists() throws SQLException {
-        int productId = 1;
-        when(mockRepository.checkIfProductExists(Mockito.eq(productId), Mockito.any(Connection.class))).thenReturn(true);
+    void testDeleteProductById_Fail() throws SQLException {
+        // Arrange
+        when(mockRepository.deleteProductById(Mockito.eq(expectedProduct.getId()), Mockito.any(Connection.class))).thenReturn(false);
 
-        boolean result = productService.checkIfProductExists(productId);
+        // Act and Assert
+        assertFalse(productService.deleteProductById(expectedProduct.getId()));
+    }
 
+    /**
+     * Test case: Check if product exists successfully.
+     */
+    @Test
+    void testCheckIfProductExists_Success() throws SQLException {
+        // Arrange
+        when(mockRepository.checkIfProductExists(Mockito.eq(expectedProduct.getId()), Mockito.any(Connection.class))).thenReturn(true);
+
+        // Act
+        boolean result = productService.checkIfProductExists(expectedProduct.getId());
+
+        // Assert
         assertTrue(result);
     }
 
+    /**
+     * Test case: Check if product exists fails.
+     */
     @Test
-    void testSaveProduct() throws SQLException {
-        String productName = "New Product";
-        double productPrice = 75.0;
-        Product expectedProduct = new Product(1, productName, productPrice);
+    void testCheckIfProductExists_Fail() throws SQLException {
+        // Arrange
+        when(mockRepository.checkIfProductExists(Mockito.eq(expectedProduct.getId()), Mockito.any(Connection.class))).thenReturn(false);
 
-        when(mockRepository.insertProduct(Mockito.eq(productName), Mockito.eq(productPrice), Mockito.any(Connection.class)))
+        // Act and Assert
+        assertFalse(productService.checkIfProductExists(expectedProduct.getId()));
+    }
+
+    /**
+     * Test case: Save product successfully.
+     */
+    @Test
+    void testSaveProduct_Success() throws SQLException {
+        // Arrange
+        when(mockRepository.insertProduct(Mockito.eq(expectedProduct.getName()), Mockito.eq(expectedProduct.getPrice()), Mockito.any(Connection.class)))
                 .thenReturn(expectedProduct);
 
-        Product actualProduct = productService.saveProduct(productName, productPrice);
+        // Act
+        Product actualProduct = productService.saveProduct(expectedProduct.getName(), expectedProduct.getPrice());
 
+        // Assert
         assertNotNull(actualProduct);
-        assertEquals(expectedProduct, actualProduct);
+        assertEquals(expectedProduct.getId(), actualProduct.getId());
+        assertEquals(expectedProduct.getName(), actualProduct.getName());
+        assertEquals(expectedProduct.getPrice(), actualProduct.getPrice());
+    }
+
+    /**
+     * Test case: Save product fails.
+     */
+    @Test
+    void testSaveProduct_Fail() throws SQLException {
+        when(mockRepository.insertProduct(Mockito.eq(expectedProduct.getName()), Mockito.eq(expectedProduct.getPrice()), Mockito.any(Connection.class)))
+                .thenThrow(new SQLException("Database connection error"));
+
+        assertThrows(SQLException.class, () -> productService.saveProduct(expectedProduct.getName(), expectedProduct.getPrice()));
     }
 }

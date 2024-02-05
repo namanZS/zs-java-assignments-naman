@@ -14,10 +14,10 @@ public class ProductController {
     private static final Logger logger = LogManager.getLogger(Main.class);
     private final ProductService productservice;
 
-    public ProductController() throws SQLException, IOException {
+    public ProductController() {
         productservice=new ProductService();
-
     }
+
     public void findAllProducts(){
         List<Product> productsList=new ArrayList<>();
         try{
@@ -37,13 +37,14 @@ public class ProductController {
 
         }
     }
-public void findProductById() throws SQLException {
-    System.out.println("Enter the Product Id: ");
+    public void findProductById() throws SQLException {
+        System.out.println("Enter the Product Id: ");
         int id=readIntValue();
         Product fetchedProduct;
         try {
-            fetchedProduct = productservice.findProductById(id);
-            if(fetchedProduct.getName()==null) System.out.println("Product id not found!!");
+            fetchedProduct=productservice.findProductById(id);
+
+            if(fetchedProduct==null) System.out.println("Product id not found!!");
             else System.out.println(fetchedProduct);
         }
         catch(SQLException e){
@@ -51,59 +52,59 @@ public void findProductById() throws SQLException {
         }
 
 
-}
-
-public void saveProduct() throws SQLException {
-    System.out.println("Enter the details:");
-    String name=readProductName();
-    double price=readProductPrice();
-    Product fetchedProduct;
-try{
-    fetchedProduct=productservice.saveProduct(name,price);
-    System.out.println(fetchedProduct);
-}
-catch(SQLException e){
-    logger.error(e);
-}
-
-
-}
-public void deleteProductById() throws SQLException {
-    System.out.println("Enter the Product Id: ");
-    int id=readIntValue();
-    try{
-        boolean successDeleted=productservice.deleteProductById(id);
-        if(successDeleted){
-            System.out.println("product Deleted!!");
-        }
-        else{
-            System.out.println("Product not found!!");
-        }
-    }
-    catch(SQLException e){
-        logger.error(e);
     }
 
-}
-public void checkIfProductExists() throws SQLException {
-    System.out.println("Enter the Product Id: ");
-    int id = readIntValue();
-    try{
-        boolean productFound=productservice.checkIfProductExists(id);
-        if(productFound){
-            System.out.println("Found product!!");
+    public void saveProduct() throws SQLException {
+        System.out.println("Enter the details:");
+        String name=readProductName();
+        double price=readProductPrice();
+        Product fetchedProduct;
+        try{
+            fetchedProduct=productservice.saveProduct(name,price);
+            System.out.println(fetchedProduct);
         }
-        else{
-            System.out.println("Product not found");
+        catch(SQLException e){
+            logger.error(e);
+        }
+
+
+    }
+    public void deleteProductById() throws SQLException {
+        System.out.println("Enter the Product Id: ");
+        int id=readIntValue();
+        try{
+            boolean successDeleted=productservice.deleteProductById(id);
+            if(successDeleted){
+                System.out.println("product Deleted!!");
+            }
+            else{
+                System.out.println("Product not found!!");
+            }
+        }
+        catch(SQLException e){
+            logger.error(e);
         }
 
     }
-    catch(SQLException e){
-        logger.error(e);
+    public void checkIfProductExists() throws SQLException {
+        System.out.println("Enter the Product Id: ");
+        int id = readIntValue();
+        try{
+            boolean productFound=productservice.checkIfProductExists(id);
+            if(productFound){
+                System.out.println("Found product!!");
+            }
+            else{
+                System.out.println("Product not found");
+            }
+
+        }
+        catch(SQLException e){
+            logger.error(e);
+        }
+
+
     }
-
-
-}
     private String readProductName() {
         String name;
         do {

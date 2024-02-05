@@ -12,26 +12,26 @@ public class ProductRepository {
     private static final Logger logger = LogManager.getLogger(ProductRepository.class);
     public List<Product> getAllProduct(Connection con) throws SQLException {
         List<Product>productList=new ArrayList<>();
-    try{
+        try{
 
-        String Query = "SELECT id, name, price FROM product";
-    PreparedStatement preparedStatement = con.prepareStatement(Query);
+            String Query = "SELECT id, name, price FROM product";
+            PreparedStatement preparedStatement = con.prepareStatement(Query);
 
-    ResultSet result =preparedStatement.executeQuery();
-        while (result.next()) {
-            int id = result.getInt("id");
-            String name = result.getString("name");
-            double price = result.getDouble("price");
-            Product product = new Product(id, name, price);
-            productList.add(product);
+            ResultSet result =preparedStatement.executeQuery();
+            while (result.next()) {
+                int id = result.getInt("id");
+                String name = result.getString("name");
+                double price = result.getDouble("price");
+                Product product = new Product(id, name, price);
+                productList.add(product);
+            }
+            return productList;
+
+        } catch (SQLException e) {
+            logger.error("Error in getAllProduct from repository layer");
+            throw new SQLException("Error in getting all Products!!");
         }
-        return productList;
-
-    } catch (SQLException e) {
-        logger.error("Error in getAllProduct from repository layer");
-        throw new SQLException("Error in getting all Products!!");
     }
-}
     public void createTable(Connection con) throws SQLException {
         try{
             String createTableQuery="CREATE TABLE IF NOT EXISTS product ("
@@ -47,7 +47,7 @@ public class ProductRepository {
     }
 
     public Product findProductById(int id, Connection con) throws SQLException {
-        if(!checkIfProductExists(id,con)) return new Product();
+        if(!checkIfProductExists(id,con)) return null;
         try {
             String findProductQuery = "SELECT id, name, price FROM product WHERE id = ?";
             PreparedStatement preparedStatement = con.prepareStatement(findProductQuery);
@@ -85,7 +85,7 @@ public class ProductRepository {
             PreparedStatement preparedStatement = con.prepareStatement(checkProductQuery);
             preparedStatement.setInt(1, id);
             ResultSet result=preparedStatement.executeQuery();
-           return result.next();
+            return result.next();
 
         } catch (SQLException e) {
             logger.error("Error in checking if Product exists!!");
@@ -106,8 +106,8 @@ public class ProductRepository {
 
             ResultSet keys =preparedStatement.getGeneratedKeys();
             keys.next();
-             int id= keys.getInt(1);
-             return new Product(id,name,price);
+            int id= keys.getInt(1);
+            return new Product(id,name,price);
         } catch (SQLException e) {
             logger.error("Error in inserting Product!!");
             throw new SQLException("Error in inserting Product!!");
