@@ -1,0 +1,44 @@
+package com.zs.assignment10.repository;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
+
+public class BuildConnection {
+    private static final Logger logger = LogManager.getLogger(BuildConnection.class);
+    private static final Properties properties = new Properties();
+    private static Connection connection =null;
+
+    public static Connection getConnection() throws SQLException, IOException {
+        if(connection!=null) {
+            return connection;
+        }
+        try (FileInputStream input = new FileInputStream("/Users/raramuri/Documents/zs-java-assignments-naman/src/main/resources/dbconfigs.properties")) {
+            properties.load(input);
+        } catch (IOException e) {
+            logger.error("DbConfig file not found!!");
+            throw new IOException("properties file not found");
+        }
+
+        String dbUrl = properties.getProperty("db.url3");
+        String dbUsername = properties.getProperty("db.username");
+        String dbPassword = properties.getProperty("db.password");
+        try {
+            connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            logger.info("Db connection successful");
+            return connection;
+        } catch (SQLException e) {
+            logger.error("Db connection error!!");
+            throw new SQLException("Error in creating db connection");
+
+        }
+
+
+    }
+}
