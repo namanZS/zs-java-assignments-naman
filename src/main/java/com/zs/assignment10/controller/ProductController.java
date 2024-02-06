@@ -10,21 +10,25 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 public class ProductController {
-    private final Scanner scanner = new Scanner(System.in);
-    private static final Logger logger = LogManager.getLogger(Main.class);
+    private final Scanner scanner;
+    private final Logger logger;
     private final ProductService productservice;
 
     public ProductController() {
+
+        scanner= new Scanner(System.in);
         productservice=new ProductService();
+        logger= LogManager.getLogger(Main.class);
     }
 
-    public void findAllProducts(){
+    public void findAllProducts() throws SQLException {
         List<Product> productsList=new ArrayList<>();
         try{
             productsList=productservice.getAllProducts();
 
         }catch(SQLException e){
             logger.error(e);
+            throw new SQLException(e);
         }
 
         if(productsList.isEmpty()){
@@ -49,6 +53,7 @@ public class ProductController {
         }
         catch(SQLException e){
             logger.error(e);
+            throw new SQLException(e);
         }
 
 
@@ -65,6 +70,7 @@ public class ProductController {
         }
         catch(SQLException e){
             logger.error(e);
+            throw new SQLException(e);
         }
 
 
@@ -83,6 +89,7 @@ public class ProductController {
         }
         catch(SQLException e){
             logger.error(e);
+            throw new SQLException(e);
         }
 
     }
@@ -101,6 +108,7 @@ public class ProductController {
         }
         catch(SQLException e){
             logger.error(e);
+            throw new SQLException(e);
         }
 
 

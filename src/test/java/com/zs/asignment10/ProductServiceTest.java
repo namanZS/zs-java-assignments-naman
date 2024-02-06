@@ -31,8 +31,6 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        mockConnection = Mockito.mock(Connection.class);
-        mockRepository = Mockito.mock(ProductRepository.class);
         MockitoAnnotations.initMocks(this);
         expectedProduct = new Product(1, "Test Product", 75.0);
     }
