@@ -7,6 +7,7 @@ import com.zs.assignment11.exception.CustomException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class CategoryService {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (category.isEmpty()) {
             logger.error("Category id not found!!");
-            throw new CustomException("Category not found with ID: " + categoryId);
+            throw new CustomException("Category not found with ID: " + categoryId, HttpStatus.NOT_FOUND);
         }
         logger.info("Retrieved products for category with ID", categoryId);
         return category.get().getProducts();
@@ -66,9 +67,9 @@ public class CategoryService {
      * @throws CustomException if category details are incomplete.
      */
     public Category createCategory(Category category) {
-        if (category.getName() == null || category.getProducts() == null) {
+        if (category.getName() == null) {
             logger.error("Incomplete category details");
-            throw new CustomException("Enter complete details of category");
+            throw new CustomException("Enter complete details of category", HttpStatus.BAD_REQUEST);
         }
         logger.info("Category Created");
         return categoryRepository.save(category);
@@ -84,7 +85,7 @@ public class CategoryService {
     public Optional<Category> getCategory(long id) {
         if (categoryRepository.findById(id).isEmpty()) {
             logger.error("category not found");
-            throw new CustomException("Category id not found");
+            throw new CustomException("Category id not found", HttpStatus.NOT_FOUND);
         }
         logger.info("Category fetched successfully!");
         return categoryRepository.findById(id);

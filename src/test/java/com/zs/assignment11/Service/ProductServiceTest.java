@@ -159,5 +159,32 @@ public class ProductServiceTest {
 
         verify(productRepositoryMock, times(1)).findAll();
     }
+    @Test
+    void updateProduct() {
+        // Mocking data
+        Product existingProduct = new Product(1L, "ExistingProduct", 20.0);
+        Product updatedProduct = new Product();
+        updatedProduct.setPrice(100000.0);
+        updatedProduct.setId(1L);
+
+        // Mocking repository behavior
+        when(productRepositoryMock.findById(1L)).thenReturn(Optional.of(existingProduct));
+        when(productRepositoryMock.save(any(Product.class))).thenReturn(updatedProduct);
+
+        // Perform the service method and assert the result
+        Product result = productService.updateProductFeilds(1L, updatedProduct);
+        assertEquals(updatedProduct.getName(), result.getName());
+        assertEquals(updatedProduct.getPrice(), result.getPrice());
+    }
+
+    @Test
+    void updateProductNotFound() {
+        when(productRepositoryMock.findById(1L)).thenReturn(Optional.empty());
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> productService.updateProduct(1L, updatedProduct));
+
+        assertEquals("Product not found with ID: 1", exception.getMessage());
+    }
 
 }

@@ -73,7 +73,7 @@ public class CategoryControllerTest {
     public void testGetProductsByCategory() throws Exception {
         when(categoryService.getProductsByCategory(1L)).thenReturn(mockProducts);
 
-        mockMvc.perform(get("/category/1")
+        mockMvc.perform(get("/category/1/products")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

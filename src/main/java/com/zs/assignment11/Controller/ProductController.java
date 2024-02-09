@@ -2,6 +2,7 @@ package com.zs.assignment11.Controller;
 
 import com.zs.assignment11.Model.Product;
 import com.zs.assignment11.Service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,9 @@ public class ProductController {
      *
      * @return List of Product objects representing all products.
      */
+    @Operation(
+            summary = "Get all products"
+    )
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
@@ -34,6 +38,10 @@ public class ProductController {
      * @param product The Product object representing the new product to be added.
      * @return The created Product object.
      */
+
+    @Operation(
+            summary = "Create a product"
+    )
     @PostMapping("/{catId}")
     public Product addProduct(@PathVariable("catId") long catId, @RequestBody Product product) {
         return productService.createProduct(catId, product);
@@ -46,6 +54,10 @@ public class ProductController {
      * @param product The updated Product object.
      * @return The updated Product object.
      */
+
+    @Operation(
+            summary = "Update complete details fo a product"
+    )
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable("id") Long id, @RequestBody Product product) {
         return productService.updateProduct(id, product);
@@ -56,8 +68,21 @@ public class ProductController {
      *
      * @param id The ID of the product to be deleted.
      */
+    @Operation(
+            summary = "Delete a product"
+    )
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable("id") Long id) {
         productService.deleteProduct(id);
     }
+    @Operation(
+            summary = "Update some fields of a product"
+    )
+    @PatchMapping("/{id}")
+    public Product updateProductpartially(@PathVariable("id")Long id,@RequestBody Product product){
+        return productService.updateProductFeilds(id,product);
+    }
+
+
+
 }

@@ -113,4 +113,16 @@ public class ProductControllerTest {
                 .andExpect(status().isOk());
         verify(productService, times(1)).deleteProduct(1L);
     }
+    @Test
+    public void testUpdateDetails() throws Exception{
+        Product updatedProduct = new Product(1L,"samsung", 100000.0);
+
+        when(productService.updateProductFeilds(anyLong(), any(Product.class))).thenReturn(new Product(1L,"samsung",10000.0));
+
+        mockMvc.perform(patch("/product/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"price\":100000.0}"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
 }

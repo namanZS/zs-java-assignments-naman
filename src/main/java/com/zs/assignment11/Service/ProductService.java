@@ -4,10 +4,10 @@ import com.zs.assignment11.Model.Category;
 import com.zs.assignment11.Model.Product;
 import com.zs.assignment11.Repository.ProductRepository;
 import com.zs.assignment11.exception.CustomException;
-import com.zs.assignment9.Repository.BuildConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,7 +57,7 @@ public class ProductService {
         Optional<Category> categoryOptional = categoryService.getCategory(id);
         if (categoryOptional.isEmpty()) {
             logger.error("Category not found");
-            throw new CustomException("category not present");
+            throw new CustomException("category not present", HttpStatus.NOT_FOUND);
         }
         List<Product> list = categoryOptional.get().getProducts();
         list.add(product);
@@ -75,8 +75,10 @@ public class ProductService {
      * @throws CustomException If the specified product is not found.
      */
     public Product updateProduct(Long productId, Product product) {
+        if(product.getPrice()==0||product.getName()==null) throw new CustomException("Incomplete details of updated products",HttpStatus.BAD_REQUEST);
+
         Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new CustomException("Product not found with ID: " + productId));
+                .orElseThrow(() -> new CustomException("Product not found with ID: " + productId, HttpStatus.NOT_FOUND));
         existingProduct.setName(product.getName());
         existingProduct.setPrice(product.getPrice());
         logger.info("Product updated successfully");
@@ -90,7 +92,19 @@ public class ProductService {
      * @throws CustomException If the specified product is not found.
      */
     public void deleteProduct(Long id) {
-        if (!productRepository.existsById(id)) throw new CustomException("Product not found");
+        if (!productRepository.existsById(id)) throw new CustomException("Product not found", HttpStatus.NOT_FOUND);
         else productRepository.deleteById(id);
+    }
+    public Product updateProductFeilds(Long id, Product updatedProduct) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Product not found with id: " + id,HttpStatus.NOT_FOUND));
+
+        if (updatedProduct.getName() != null) {
+            existingProduct.setName(updatedProduct.getName());
+        }
+        if(updatedProduct.getPrice()!=null){
+            existingProduct.setPrice(updatedProduct.getPrice());
+        }
+        return productRepository.save(existingProduct);
     }
 }
