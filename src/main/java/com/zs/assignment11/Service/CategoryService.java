@@ -4,7 +4,6 @@ import com.zs.assignment11.Model.Category;
 import com.zs.assignment11.Model.Product;
 import com.zs.assignment11.Repository.CategoryRepository;
 import com.zs.assignment11.exception.CustomException;
-import com.zs.assignment9.Repository.BuildConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +12,42 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for handling Category-related operations.
+ */
 @Service
 public class CategoryService {
+
     private final CategoryRepository categoryRepository;
-    private  final Logger logger;
+    private final Logger logger;
+
+    /**
+     * Constructor for CategoryService.
+     *
+     * @param categoryRepository The repository for Category entities.
+     */
     @Autowired
     public CategoryService(CategoryRepository categoryRepository) {
         logger = LogManager.getLogger(CategoryService.class);
         this.categoryRepository = categoryRepository;
     }
 
+    /**
+     * Retrieves all categories.
+     *
+     * @return List of Category objects representing all categories.
+     */
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
+    /**
+     * Retrieves products by category ID.
+     *
+     * @param categoryId The ID of the category for which products are to be retrieved.
+     * @return List of Product objects associated with the specified category.
+     * @throws CustomException if the category is not found.
+     */
     public List<Product> getProductsByCategory(Long categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (category.isEmpty()) {
@@ -37,6 +58,13 @@ public class CategoryService {
         return category.get().getProducts();
     }
 
+    /**
+     * Creates a new category.
+     *
+     * @param category The Category object representing the new category to be created.
+     * @return The created Category object.
+     * @throws CustomException if category details are incomplete.
+     */
     public Category createCategory(Category category) {
         if (category.getName() == null || category.getProducts() == null) {
             logger.error("Incomplete category details");
@@ -46,18 +74,13 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public Category updateCategory(Long categoryId, Category category) {
-
-        Optional<Category> existingCategory = Optional.ofNullable(categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CustomException("Category not found with ID: " + categoryId)));
-        if (category.getName() == null) {
-            throw new IllegalArgumentException("Category name cannot be null");
-        }
-        existingCategory.get().setName(category.getName());
-        logger.info("Category updated successfully");
-        return categoryRepository.save(existingCategory.get());
-    }
-
+    /**
+     * Retrieves a category by ID.
+     *
+     * @param id The ID of the category to be retrieved.
+     * @return Optional containing the Category object if found.
+     * @throws CustomException if the category is not found.
+     */
     public Optional<Category> getCategory(long id) {
         if (categoryRepository.findById(id).isEmpty()) {
             logger.error("category not found");
