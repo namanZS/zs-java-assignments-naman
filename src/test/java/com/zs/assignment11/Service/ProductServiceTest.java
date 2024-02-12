@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -141,6 +142,28 @@ public class ProductServiceTest {
         verify(productRepositoryMock, times(1)).findById(productId);
         verify(productRepositoryMock, never()).save(any());
     }
+    @Test
+    public void testUpdateProductWithInvalidPrice() {
+        Product invalidProduct = new Product(productId, "Trimmer", 0.0);
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.of(new Product()));
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            productService.updateProduct(productId, invalidProduct);
+        });
+
+        assertEquals("Incomplete details of updated products", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    }
+    @Test
+    public void testUpdateProductWithInvalidName() {
+        Product invalidProduct = new Product(productId, null, 1110.0);
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.of(new Product()));
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            productService.updateProduct(productId, invalidProduct);
+        });
+
+        assertEquals("Incomplete details of updated products", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    }
 
     /**
      * Test case for the method getAllProducts.
@@ -160,31 +183,53 @@ public class ProductServiceTest {
         verify(productRepositoryMock, times(1)).findAll();
     }
     @Test
-    void updateProduct() {
-        // Mocking data
-        Product existingProduct = new Product(1L, "ExistingProduct", 20.0);
-        Product updatedProduct = new Product();
-        updatedProduct.setPrice(100000.0);
-        updatedProduct.setId(1L);
+    public void testUpdateProductFeilds() {
+        Product validProduct = new Product(productId, "Updated Laptop", 12000000000.0);
 
-        // Mocking repository behavior
-        when(productRepositoryMock.findById(1L)).thenReturn(Optional.of(existingProduct));
-        when(productRepositoryMock.save(any(Product.class))).thenReturn(updatedProduct);
-
-        // Perform the service method and assert the result
-        Product result = productService.updateProductFeilds(1L, updatedProduct);
-        assertEquals(updatedProduct.getName(), result.getName());
-        assertEquals(updatedProduct.getPrice(), result.getPrice());
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.of(new Product()));
+        when(productRepositoryMock.save(any(Product.class))).thenReturn(validProduct);
+        Product updatedProduct = productService.updateProductFeilds(productId, validProduct);
+        assertEquals(validProduct, updatedProduct);
     }
-
     @Test
-    void updateProductNotFound() {
+    void testUpdateProductFeildsNotFound() {
         when(productRepositoryMock.findById(1L)).thenReturn(Optional.empty());
 
         CustomException exception = assertThrows(CustomException.class,
-                () -> productService.updateProduct(1L, updatedProduct));
+                () -> productService.updateProductFeilds(1L, updatedProduct));
 
-        assertEquals("Product not found with ID: 1", exception.getMessage());
+        assertEquals("Product not found with id: 1", exception.getMessage());
     }
+
+    @Test
+    void testUpdateFieldsForOnlyPrice() {
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.of(requiredProduct));
+
+        Product newProduct = new Product();
+        newProduct.setId(productId);
+        newProduct.setPrice(10000.0);
+        when(productRepositoryMock.save(any(Product.class))).thenReturn(newProduct);
+        Product updatedProduct = productService.updateProductFeilds(productId, newProduct);
+        Product validProduct = new Product(productId, "Laptop", 10000.0);
+        assertEquals(validProduct.getPrice(), updatedProduct.getPrice());
+        assertEquals(validProduct.getId(), updatedProduct.getId());
+
+
+    }
+    @Test
+    void testUpdateFieldsForOnlyName() {
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.of(requiredProduct));
+
+        Product newProduct = new Product();
+        newProduct.setId(productId);
+        newProduct.setName("Lalantop");
+        when(productRepositoryMock.save(any(Product.class))).thenReturn(newProduct);
+        Product updatedProduct = productService.updateProductFeilds(productId, newProduct);
+        Product validProduct = new Product(productId, "Lalantop", 10000.0);
+        assertEquals(validProduct.getName(), updatedProduct.getName());
+        assertEquals(validProduct.getId(), updatedProduct.getId());
+    }
+
+
 
 }

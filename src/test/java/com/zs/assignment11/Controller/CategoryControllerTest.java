@@ -45,6 +45,7 @@ public class CategoryControllerTest {
         mockCategories.add(new Category(1L, "Electronics"));
         mockCategories.add(new Category(2L, "Clothing"));
         mockProducts.add(new Product(1L, "Laptop", 1000.0));
+        mockCategories.get(0).setProducts(mockProducts);
     }
 
     /**
@@ -71,15 +72,18 @@ public class CategoryControllerTest {
      */
     @Test
     public void testGetProductsByCategory() throws Exception {
-        when(categoryService.getProductsByCategory(1L)).thenReturn(mockProducts);
+        Category mockCategory = mockCategories.get(0);
+
+        // Stubbing the categoryService.getProductsByCategory(1L) to return the mockCategory
+        when(categoryService.getProductsByCategory(1L)).thenReturn(mockCategory);
 
         mockMvc.perform(get("/category/1/products")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("Laptop"))
-                .andExpect(jsonPath("$[0].price").value(1000.0));
+                .andExpect(jsonPath("$.products[0].id").value(mockCategory.getProducts().get(0).getId()))
+                .andExpect(jsonPath("$.products[0].name").value(mockCategory.getProducts().get(0).getName()))
+                .andExpect(jsonPath("$.products[0].price").value(mockCategory.getProducts().get(0).getPrice()));
     }
 
     /**

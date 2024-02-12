@@ -54,10 +54,10 @@ class CategoryServiceTest {
     void testGetProductsByCategory() {
         Category category = new Category(categoryId, "Category 1", products);
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
-        List<Product> result = categoryService.getProductsByCategory(categoryId);
+        Category result = categoryService.getProductsByCategory(categoryId);
         assertNotNull(result);
-        assertEquals(products.size(), result.size());
-        assertEquals(products, result);
+        assertEquals(products.size(), result.getProducts().size());
+        assertEquals(products, result.getProducts());
 
         verify(categoryRepository, times(1)).findById(categoryId);
     }

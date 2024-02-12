@@ -49,14 +49,14 @@ public class CategoryService {
      * @return List of Product objects associated with the specified category.
      * @throws CustomException if the category is not found.
      */
-    public List<Product> getProductsByCategory(Long categoryId) {
+    public Category getProductsByCategory(Long categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (category.isEmpty()) {
             logger.error("Category id not found!!");
             throw new CustomException("Category not found with ID: " + categoryId, HttpStatus.NOT_FOUND);
         }
         logger.info("Retrieved products for category with ID", categoryId);
-        return category.get().getProducts();
+        return category.get();
     }
 
     /**
